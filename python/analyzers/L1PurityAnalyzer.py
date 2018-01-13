@@ -72,6 +72,8 @@ class L1PurityAnalyzer(Analyzer):
         
         event.gen_bmesons = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 500 and abs(pp.pdgId()) < 600 and pp.isPromptDecayed()]
 
+        event.gen_bmesons.sort(key = lambda x : x.pt(), reverse = True)
+        
         # walk down the lineage of the B mesons and find the final state muons and charged particles
         for ip in event.gen_bmesons :
             if getattr(self.cfg_ana, 'verbose', False):
@@ -88,8 +90,8 @@ class L1PurityAnalyzer(Analyzer):
                         finalcharged.append(ipp)
                     if getattr(self.cfg_ana, 'verbose', False):
                         print '     PdgId : %s   pt : %s  eta : %s   phi : %s' %(ipp.pdgId(), ipp.pt(), ipp.eta(), ipp.phi())
-            ip.finalmuondaughters    = finalmuons
-            ip.finalchargeddaughters = finalcharged
+            ip.finalmuondaughters    = sorted(finalmuons, key = lambda x : x.pt(), reverse = True)
+            ip.finalchargeddaughters = sorted(finalcharged, key = lambda x : x.pt(), reverse = True)
 
         # now find the L1 muons from BX = 0
         L1muons_allbx = self.handles['L1muons'].product()
