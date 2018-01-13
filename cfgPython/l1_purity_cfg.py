@@ -111,9 +111,14 @@ jetAna = cfg.Analyzer(
     #jesCorr = 1., # Shift jet energy scale in terms of uncertainties (1 = +1 sigma)
 )
 
+mainAna = cfg.Analyzer(
+    L1PurityAnalyzer,
+    name = 'L1PurityAnalyzer',
+)
+
 treeProducer = cfg.Analyzer(
     L1PurityTreeProducer,
-    name = 'L1PurityTreeProducer'
+    name = 'L1PurityTreeProducer',
 )
 
 ###################################################
@@ -126,6 +131,7 @@ sequence = cfg.Sequence([
     genAna,
     vertexAna,
     pileUpAna,
+    mainAna,
 #     jetAna,
     treeProducer,
 ])

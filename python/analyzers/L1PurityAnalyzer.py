@@ -108,7 +108,7 @@ class L1PurityAnalyzer(Analyzer):
         if a == p :
             return True
         for i in xrange(0,p.numberOfMothers()):
-            if isAncestor(a,p.mother(i)):
+            if L1PurityAnalyzer.isAncestor(a,p.mother(i)):
                 return True
         return False
 
