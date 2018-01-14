@@ -23,10 +23,9 @@ def ptHatWeight(qscale):
     elif qscale >   15.: return 10.919193711641835
     else               : return None
 
-
 samples = glob('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/*Chunk*/L1PurityTreeProducer/tree.root')
 
-for ii in samples[:3]:
+for ii in samples:
 
     print 'loading dataset %s...' %ii
     dataset = pandas.DataFrame( root_numpy.root2array(ii, 'tree') )
