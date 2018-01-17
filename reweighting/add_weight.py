@@ -6,24 +6,24 @@ from glob import glob
 
 @np.vectorize
 def ptHatWeight(qscale):
-    if   qscale > 3200.: return 1.9712296083927894e-12
-    elif qscale > 2400.: return 8.162270429079056e-11
-    elif qscale > 1800.: return 1.3409608412733624e-09
-    elif qscale > 1400.: return 9.739178737950565e-09
-    elif qscale > 1000.: return 1.0828089252003986e-07
-    elif qscale >  800.: return 3.715447520938835e-07
-    elif qscale >  600.: return 7.893770288183407e-07
-    elif qscale >  470.: return 3.83303535686388e-06
-    elif qscale >  300.: return 3.553529868585685e-05
-    elif qscale >  170.: return 0.0009911563312897424
-    elif qscale >  120.: return 0.003993077196987641
-    elif qscale >   80.: return 0.025108659340147128
-    elif qscale >   50.: return 0.1102147655818603
-    elif qscale >   30.: return 0.81795030487855
-    elif qscale >   15.: return 10.919193711641835
+    if   qscale > 3200.: return 1.8956843890843723e-12
+    elif qscale > 2400.: return 8.160483583860695e-11
+    elif qscale > 1800.: return 1.3557068341766136e-09
+    elif qscale > 1400.: return 9.737048034862061e-09
+    elif qscale > 1000.: return 1.0825719822589222e-07
+    elif qscale >  800.: return 3.7146342104002605e-07
+    elif qscale >  600.: return 7.89204251750761e-07
+    elif qscale >  470.: return 3.832196524686683e-06
+    elif qscale >  300.: return 3.5527522981988425e-05
+    elif qscale >  170.: return 0.0009909394626551465
+    elif qscale >  120.: return 0.003992203477653263
+    elif qscale >   80.: return 0.025103166027266692
+    elif qscale >   50.: return 0.11019064968756105
+    elif qscale >   30.: return 0.831341988631457
+    elif qscale >   15.: return 10.916804834723132
     else               : return None
 
-samples = glob('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/*Chunk*/L1PurityTreeProducer/tree.root')
+samples = glob('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/*Chunk*/L1PurityTreeProducer/tree.root')
 
 for ii in samples:
 
@@ -39,3 +39,18 @@ for ii in samples:
     dataset.to_root(ii.replace('tree.root', 'tree_enriched.root'), key='tree', store_index=False)
     print '\t...done'
 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

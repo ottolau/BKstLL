@@ -2,6 +2,7 @@ import ROOT
 import numpy as np
 from array import array
 from copy import deepcopy as dc
+from glob import glob
 
 ROOT.TH1.SetDefaultSumw2()
 
@@ -47,21 +48,29 @@ bins = [
 
 
 chain = ROOT.TChain('tree')
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_15to30/L1PurityTreeProducer/tree.root'    )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_30to50/L1PurityTreeProducer/tree.root'    )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_50to80/L1PurityTreeProducer/tree.root'    )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_80to120/L1PurityTreeProducer/tree.root'   )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_120to170/L1PurityTreeProducer/tree.root'  )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_170to300/L1PurityTreeProducer/tree.root'  )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_300to470/L1PurityTreeProducer/tree.root'  )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_470to600/L1PurityTreeProducer/tree.root'  )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_600to800/L1PurityTreeProducer/tree.root'  )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_800to1000/L1PurityTreeProducer/tree.root' )
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_1000to1400/L1PurityTreeProducer/tree.root')
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_1400to1800/L1PurityTreeProducer/tree.root')
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_1800to2400/L1PurityTreeProducer/tree.root')
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_2400to3200/L1PurityTreeProducer/tree.root')
-chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity/QCD_Pt_3200toInf/L1PurityTreeProducer/tree.root' )
+
+samples = glob('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/*Chunk*/L1PurityTreeProducer/tree.root')
+
+print 'loading samples ...'
+for sample in samples:
+    chain.Add(sample)
+'... done'
+
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_15to30/L1PurityTreeProducer/tree.root'    )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_30to50/L1PurityTreeProducer/tree.root'    )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_50to80/L1PurityTreeProducer/tree.root'    )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_80to120/L1PurityTreeProducer/tree.root'   )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_120to170/L1PurityTreeProducer/tree.root'  )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_170to300/L1PurityTreeProducer/tree.root'  )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_300to470/L1PurityTreeProducer/tree.root'  )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_470to600/L1PurityTreeProducer/tree.root'  )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_600to800/L1PurityTreeProducer/tree.root'  )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_800to1000/L1PurityTreeProducer/tree.root' )
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_1000to1400/L1PurityTreeProducer/tree.root')
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_1400to1800/L1PurityTreeProducer/tree.root')
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_1800to2400/L1PurityTreeProducer/tree.root')
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_2400to3200/L1PurityTreeProducer/tree.root')
+# chain.Add('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/QCD_Pt_3200toInf/L1PurityTreeProducer/tree.root' )
 
 # f1 = ROOT.TFile.Open('purity_tuple_v5.root', 'read')
 # f1.cd()

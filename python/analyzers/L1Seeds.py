@@ -3,7 +3,7 @@ from itertools import combinations
 from math import cos, cosh, sqrt
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi, bestMatch
 
-def single_muon(muons, pt, eta=2.5, qual=8, matches=[], cone=0.3, onlymuons=False):
+def single_muon(muons, pt, eta=2.5, qual=8, matches=[], cone=0.3, onlymuons=False, atvtx=True):
     
     cone2 = cone * cone
     
@@ -16,12 +16,17 @@ def single_muon(muons, pt, eta=2.5, qual=8, matches=[], cone=0.3, onlymuons=Fals
         if mu.pt()       < pt  : continue
         if abs(mu.eta()) > eta : continue
         
+        mu_for_matching = mu.clone()
+        if atvtx:
+            mu_for_matching.eta = mu.etaAtVtx
+            mu_for_matching.phi = mu.phiAtVtx
+                
         for imatch in matches:
             matched = False
             if onlymuons:
-                best_match, dRmin = bestMatch(mu, imatch.finalmuondaughters)            
+                best_match, dRmin = bestMatch(mu_for_matching, imatch.finalmuondaughters)            
             else:
-                best_match, dRmin = bestMatch(mu, imatch.finalchargeddaughters)
+                best_match, dRmin = bestMatch(mu_for_matching, imatch.finalchargeddaughters)
             matched = dRmin<cone2
             if matched: break
         
@@ -37,7 +42,7 @@ def single_muon(muons, pt, eta=2.5, qual=8, matches=[], cone=0.3, onlymuons=Fals
 def di_muon(muons, pt1, pt2, eta1=2.5, eta2=2.5, 
             qual1=8, qual2=8, minMass=-1., 
             maxMass=1.E10, minDr=-1., maxDr=1.E10, sign=-1, 
-            matches=[], cone=0.3, onlymuons=False):
+            matches=[], cone=0.3, onlymuons=False, atvtx=True):
     
     cone2 = cone*cone
     
@@ -77,6 +82,19 @@ def di_muon(muons, pt1, pt2, eta1=2.5, eta2=2.5,
         if dR < minDr: continue
         if dR > maxDr: continue
 
+        mu1_for_matching = mu1.clone()
+        mu2_for_matching = mu2.clone()
+        if atvtx:
+#             print 'pre  matching mu1: eta %.3f \t phi %.3f phi' %(mu1_for_matching.eta(), mu1_for_matching.phi())
+#             print '              mu2: eta %.3f \t phi %.3f phi' %(mu2_for_matching.eta(), mu2_for_matching.phi())
+            mu1_for_matching.eta = mu1.etaAtVtx
+            mu1_for_matching.phi = mu1.phiAtVtx
+            mu2_for_matching.eta = mu2.etaAtVtx
+            mu2_for_matching.phi = mu2.phiAtVtx
+#             print 'post matching mu1: eta %.3f \t phi %.3f phi' %(mu1_for_matching.eta(), mu1_for_matching.phi())
+#             print '              mu2: eta %.3f \t phi %.3f phi' %(mu2_for_matching.eta(), mu2_for_matching.phi())
+        
+#             import pdb ; pdb.set_trace()
         
         for imatch in matches:
             goodmatches = []
@@ -85,17 +103,17 @@ def di_muon(muons, pt1, pt2, eta1=2.5, eta2=2.5,
             dRmin2 = 999.
             
             if onlymuons:
-                best_match1, dRmin1 = bestMatch(mu1, imatch.finalmuondaughters)  
+                best_match1, dRmin1 = bestMatch(mu1_for_matching, imatch.finalmuondaughters)  
                 if dRmin1 < cone2:
                     goodmatches.append(best_match1)       
-                best_match2, dRmin2 = bestMatch(mu2, imatch.finalmuondaughters)  
+                best_match2, dRmin2 = bestMatch(mu2_for_matching, imatch.finalmuondaughters)  
                 if dRmin2 < cone2 and best_match2 != best_match1:
                     goodmatches.append(best_match2)       
             else:
-                best_match1, dRmin1 = bestMatch(mu1, imatch.finalchargeddaughters)  
+                best_match1, dRmin1 = bestMatch(mu1_for_matching, imatch.finalchargeddaughters)  
                 if dRmin1 < cone2:
                     goodmatches.append(best_match1)       
-                best_match2, dRmin2 = bestMatch(mu2, imatch.finalchargeddaughters)  
+                best_match2, dRmin2 = bestMatch(mu2_for_matching, imatch.finalchargeddaughters)  
                 if dRmin2 < cone2 and best_match2 != best_match1:
                     goodmatches.append(best_match2)       
 
@@ -158,6 +176,16 @@ def tri_muon(muons, pt1, pt2, pt3, eta1=2.5, eta2=2.5, eta3=2.5,
 
         if not passed: continue
 
+        mu1_for_matching = mu1.clone()
+        mu2_for_matching = mu2.clone()
+        mu3_for_matching = mu3.clone()
+        if atvtx:
+            mu1_for_matching.eta = mu1.etaAtVtx
+            mu1_for_matching.phi = mu1.phiAtVtx
+            mu2_for_matching.eta = mu2.etaAtVtx
+            mu2_for_matching.phi = mu2.phiAtVtx
+            mu3_for_matching.eta = mu3.etaAtVtx
+            mu3_for_matching.phi = mu3.phiAtVtx
 
         for imatch in matches:
             goodmatches = []
@@ -166,23 +194,23 @@ def tri_muon(muons, pt1, pt2, pt3, eta1=2.5, eta2=2.5, eta3=2.5,
             dRmin2 = 999.
             dRmin3 = 999.
             if onlymuons:
-                best_match1, dRmin1 = bestMatch(mu1, imatch.finalmuondaughters)  
+                best_match1, dRmin1 = bestMatch(mu1_for_matching, imatch.finalmuondaughters)  
                 if dRmin1 < cone2:
                     goodmatches.append(best_match1)       
-                best_match2, dRmin2 = bestMatch(mu2, imatch.finalmuondaughters)  
+                best_match2, dRmin2 = bestMatch(mu2_for_matching, imatch.finalmuondaughters)  
                 if dRmin2 < cone2 and best_match2 != best_match1:
                     goodmatches.append(best_match2)       
-                best_match3, dRmin3 = bestMatch(mu3, imatch.finalmuondaughters)  
+                best_match3, dRmin3 = bestMatch(mu3_for_matching, imatch.finalmuondaughters)  
                 if dRmin3 < cone2 and best_match3 != best_match2 and best_match3 != best_match1:
                     goodmatches.append(best_match3)       
             else:
-                best_match1, dRmin1 = bestMatch(mu1, imatch.finalchargeddaughters)  
+                best_match1, dRmin1 = bestMatch(mu1_for_matching, imatch.finalchargeddaughters)  
                 if dRmin1 < cone2:
                     goodmatches.append(best_match1)       
-                best_match2, dRmin2 = bestMatch(mu2, imatch.finalchargeddaughters)  
+                best_match2, dRmin2 = bestMatch(mu2_for_matching, imatch.finalchargeddaughters)  
                 if dRmin2 < cone2 and best_match2 != best_match1:
                     goodmatches.append(best_match2)       
-                best_match3, dRmin3 = bestMatch(mu3, imatch.finalchargeddaughters)  
+                best_match3, dRmin3 = bestMatch(mu3_for_matching, imatch.finalchargeddaughters)  
                 if dRmin3 < cone2 and best_match3 != best_match2 and best_match3 != best_match1:
                     goodmatches.append(best_match3)       
 
