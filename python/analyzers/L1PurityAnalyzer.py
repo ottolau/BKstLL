@@ -72,7 +72,27 @@ class L1PurityAnalyzer(Analyzer):
         
         event.gen_bmesons = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 500 and abs(pp.pdgId()) < 600 and pp.isPromptDecayed()]
 
+        event.bqs = [pp for pp in [jj for jj in packed_gen_particles] + [kk for kk in pruned_gen_particles] if abs(pp.pdgId())==5]
+
         event.gen_bmesons.sort(key = lambda x : x.pt(), reverse = True)
+
+#         if len(event.gen_bmesons): 
+#             for i in event.bqs: 
+#                 print 'pdgid %d  \t\tstatus %d\tpt %.2f\teta %.2f\tphi %.2f\t# of moms %d\tmom(0) pdgid %d' %(i.pdgId(), i.status(), i.pt(), i.eta(), i.phi(), i.numberOfMothers(), i.mother(0).pdgId())
+            #import pdb ; pdb.set_trace()
+
+        # bb pairs
+        event.gluonsplit = False
+        event.gluon = None
+        for b1, b2 in combinations(event.bqs, 2):
+            mothers1 = [b1.mother(ii) for ii in range(b1.numberOfMothers())]
+            mothers2 = [b2.mother(ii) for ii in range(b2.numberOfMothers())]
+            common = [mm for mm in mothers2 if mm in mothers1]
+            if len(common)==1 and common[0].pdgId()==21:
+                event.gluonsplit = True
+                event.gluon = common[0]
+                break
+#             if len(common): import pdb ; pdb.set_trace()
         
         # walk down the lineage of the B mesons and find the final state muons and charged particles
         for ip in event.gen_bmesons :

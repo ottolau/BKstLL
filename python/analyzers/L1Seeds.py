@@ -20,23 +20,29 @@ def single_muon(muons, pt, eta=2.5, qual=8, matches=[], cone=0.3, onlymuons=Fals
         if atvtx:
             mu_for_matching.eta = mu.etaAtVtx
             mu_for_matching.phi = mu.phiAtVtx
+        
+        match_index = -99
                 
-        for imatch in matches:
+        for ii, imatch in enumerate(matches):
+            imatch.matched = False
             matched = False
             if onlymuons:
                 best_match, dRmin = bestMatch(mu_for_matching, imatch.finalmuondaughters)            
             else:
                 best_match, dRmin = bestMatch(mu_for_matching, imatch.finalchargeddaughters)
             matched = dRmin<cone2
-            if matched: break
+            if matched: 
+                match_index = ii
+                imatch.matched = True
+                break
         
-        results.append((1, int(matched)))
+        results.append((1, int(matched), match_index))
     
     if len(results)>0:
         results.sort(key = lambda x : (x[0], x[1]), reverse=True)
-        return int(results[0][0]), int(results[0][1])
+        return int(results[0][0]), int(results[0][1]), int(results[0][2])
 
-    return 0, 0
+    return 0, 0, -1
     
 
 def di_muon(muons, pt1, pt2, eta1=2.5, eta2=2.5, 
@@ -47,7 +53,7 @@ def di_muon(muons, pt1, pt2, eta1=2.5, eta2=2.5,
     cone2 = cone*cone
     
     if len(muons)<2:
-        return 0, 0
+        return 0, 0, -1
     
     results = []
     
@@ -93,10 +99,11 @@ def di_muon(muons, pt1, pt2, eta1=2.5, eta2=2.5,
             mu2_for_matching.phi = mu2.phiAtVtx
 #             print 'post matching mu1: eta %.3f \t phi %.3f phi' %(mu1_for_matching.eta(), mu1_for_matching.phi())
 #             print '              mu2: eta %.3f \t phi %.3f phi' %(mu2_for_matching.eta(), mu2_for_matching.phi())
-        
-#             import pdb ; pdb.set_trace()
-        
-        for imatch in matches:
+                
+        match_index = -99
+
+        for ii, imatch in enumerate(matches):
+            imatch.matched = True
             goodmatches = []
             matched = False
             dRmin1 = 999.
@@ -118,7 +125,10 @@ def di_muon(muons, pt1, pt2, eta1=2.5, eta2=2.5,
                     goodmatches.append(best_match2)       
 
             matched = len(goodmatches)>1
-            if matched: break
+            if matched: 
+                match_index = ii
+                imatch.matched = True
+                break
         
 #         if matched:
 #             for i in goodmatches: print i.pdgId(), i.pt(), i.eta(), i.phi()
@@ -126,15 +136,15 @@ def di_muon(muons, pt1, pt2, eta1=2.5, eta2=2.5,
 #             for j in muons: print j.pt(), j.eta(), j.phi()
 #             import pdb ; pdb.set_trace()
 
-        results.append((1, int(matched)))
+        results.append((1, int(matched), match_index))
         
     if len(results)>0:
         results.sort(key = lambda x : (x[0], x[1]), reverse=True)
 #         if len(results)>1 and any(ii==(True, False) for ii in results) and any(ii==(True, True) for ii in results): 
 #             import pdb ; pdb.set_trace()
-        return int(results[0][0]), int(results[0][1])
+        return int(results[0][0]), int(results[0][1]), int(results[0][2])
     
-    return 0, 0
+    return 0, 0, -1
 
 
 def tri_muon(muons, pt1, pt2, pt3, eta1=2.5, eta2=2.5, eta3=2.5, 
@@ -149,7 +159,7 @@ def tri_muon(muons, pt1, pt2, pt3, eta1=2.5, eta2=2.5, eta3=2.5,
     results = []
 
     if len(muons) < 3:
-        return 0, 0
+        return 0, 0, -1
 
     muons.sort(key = lambda x : x.pt(), reverse = True)    
     triplets = combinations(muons, 3)
@@ -187,7 +197,10 @@ def tri_muon(muons, pt1, pt2, pt3, eta1=2.5, eta2=2.5, eta3=2.5,
             mu3_for_matching.eta = mu3.etaAtVtx
             mu3_for_matching.phi = mu3.phiAtVtx
 
+        match_index = -99
+
         for imatch in matches:
+            imatch.matched = False
             goodmatches = []
             matched = False
             dRmin1 = 999.
@@ -215,12 +228,15 @@ def tri_muon(muons, pt1, pt2, pt3, eta1=2.5, eta2=2.5, eta3=2.5,
                     goodmatches.append(best_match3)       
 
             matched = len(goodmatches)>2
-            if matched: break
+            if matched: 
+                match_index = ii
+                imatch.matched = True
+                break
         
-        results.append((1, int(matched)))
+        results.append((1, int(matched), match_index))
         
     if len(results)>0:
         results.sort(key = lambda x : (x[0], x[1]), reverse=True)
-        return int(results[0][0]), int(results[0][1]) 
+        return int(results[0][0]), int(results[0][1]), int(results[0][2])
     
     return 0, 0
