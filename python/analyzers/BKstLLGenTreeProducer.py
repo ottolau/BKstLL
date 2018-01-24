@@ -126,7 +126,12 @@ class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
         
         self.fillGenParticle(self.tree, 'bd', event.kstll)
 
-        for i, ib in enumerate(event.gen_bmesons[:3]):
+        self.fillGenParticle(self.tree, 'bd_lp', event.kstll.lp)
+        self.fillGenParticle(self.tree, 'bd_lm', event.kstll.lm)
+        self.fillGenParticle(self.tree, 'bd_pi', event.kstll.pi)
+        self.fillGenParticle(self.tree, 'bd_k' , event.kstll.k )
+
+        for i, ib in enumerate(event.clean_gen_bmesons[:3]):
             self.fillGenParticle(self.tree, 'b%d' %(i+1), ib)
 
         fired, matched, index = single_muon(event.L1_muons, 22, 2.1, 12, matches=event.clean_gen_bmesons); self.fill(self.tree, 'L1_SingleMu_22_eta2p1_Q12', fired) ; self.fill(self.tree, 'matched_L1_SingleMu_22_eta2p1_Q12', int(matched) * (index+1))

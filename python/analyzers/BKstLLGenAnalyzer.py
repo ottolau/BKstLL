@@ -95,16 +95,37 @@ class BKstLLGenAnalyzer(Analyzer):
             return False
         self.counters.counter('BKstLLGenAnalyzer').inc('has a good gen B0->K*LL')
         
+        toclean = None
         
         if event.kstll.isPromptDecayed():
             toclean = event.kstll
-        elif abs(event.kstll.mother(0).pdgId())==513:
-            toclean = event.kstll.mother(0)
-        else:
-            import pdb ; pdb.set_trace()
-            
-        event.clean_gen_bmesons = [ib for ib in event.gen_bmesons if ib!=toclean]
         
+        else:
+            for ip in event.gen_bmesons:
+                if self.isAncestor(ip, event.kstll):
+                    toclean = ip
+                    break
+        
+#         if toclean is None:
+#             print 'nothing to clean lumi %d, ev %d' %(event.lumi, event.eventId)
+#             return False
+#             import pdb ; pdb.set_trace()
+# 
+#         self.counters.counter('BKstLLGenAnalyzer').inc('no fuck ups')
+        
+        
+#         elif abs(event.kstll.mother(0).pdgId())>500 and abs(event.kstll.mother(0).pdgId())<600:
+#             if toclean = event.kstll.mother(0)
+#         elif abs(event.kstll.mother(0).mother(0).pdgId())>500 and abs(event.kstll.mother(0).mother(0).pdgId())<600:
+#         else:
+#             print 'nothing to clean lumi %d, ev %d' %(event.lumi, event.eventId)
+#             import pdb ; pdb.set_trace()
+            
+        if toclean is not None:
+            event.clean_gen_bmesons = [ib for ib in event.gen_bmesons if ib!=toclean]
+        else:
+            event.clean_gen_bmesons = event.gen_bmesons 
+            
 #         import pdb ; pdb.set_trace()
                 
         # now find the L1 muons from BX = 0
@@ -118,6 +139,7 @@ class BKstLLGenAnalyzer(Analyzer):
         event.L1_muons = L1_muons
 
         return True
+
 
     @staticmethod
     def isKstLL(b0meson, flav=13):

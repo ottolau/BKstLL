@@ -56,7 +56,7 @@ selectedComponents = samples
 eventSelector = cfg.Analyzer(
     EventSelector,
     name='EventSelector',
-    toSelect=[]
+    toSelect=[4148011548]
 )
 
 lheWeightAna = cfg.Analyzer(
@@ -145,6 +145,9 @@ if not production:
     comp.splitFactor     = 1
     comp.fineSplitFactor = 1
     comp.files           = comp.files[:3]
+#     comp.files           = [
+#         'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv2/BdToKstarMuMu_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/001CD385-A2B9-E611-8F02-FA163EC1154A.root',
+#     ]
 
 #     selectedComponents   = [QCD_Pt_15to30, QCD_Pt_80to120, QCD_Pt_3200toInf]
 #     for comp in selectedComponents:
