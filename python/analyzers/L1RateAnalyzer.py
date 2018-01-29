@@ -50,6 +50,12 @@ class L1RateAnalyzer(Analyzer):
             event.L1_muons = [mu for mu in L1muons_allbx]
             if len(event.L1_muons): import pdb ; pdb.set_trace()
         
+        # append a reco jet (if it exists) to each L1 muon
+        for mu in event.L1_muons:
+            jets = sorted([jj for jj in event.jets if deltaR2(jj.eta(), jj.phi(), mu.etaAtVtx(), mu.phiAtVtx()) < 0.16], key = lambda x : deltaR2(x, mu))
+            if len(jets):
+                mu.jet = jets[0]
+        
         event.L1_muons_eta_0p5_q8  = sorted([mu for mu in event.L1_muons if abs(mu.eta())<0.5       and mu.hwQual()>=8 ], key = lambda mu : mu.pt(), reverse = True)
         event.L1_muons_eta_0p5_q12 = sorted([mu for mu in event.L1_muons if abs(mu.eta())<0.5       and mu.hwQual()>=12], key = lambda mu : mu.pt(), reverse = True)
         event.L1_muons_eta_0p8_q8  = sorted([mu for mu in event.L1_muons if abs(mu.eta())<0.8       and mu.hwQual()>=8 ], key = lambda mu : mu.pt(), reverse = True)

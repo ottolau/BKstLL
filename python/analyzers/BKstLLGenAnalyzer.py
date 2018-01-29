@@ -138,6 +138,8 @@ class BKstLLGenAnalyzer(Analyzer):
         
         event.L1_muons = L1_muons
 
+        event.selectedLeptons = [] # don't really care about isolated leptons, right?
+        
         return True
 
 

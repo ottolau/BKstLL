@@ -19,6 +19,7 @@ from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer     import LHEWeightAnal
         
 # Tau-tau analysers        
 from CMGTools.H2TauTau.proto.analyzers.TriggerAnalyzer      import TriggerAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.JetAnalyzer          import JetAnalyzer
 
 # WTau3Mu analysers
 from CMGTools.BKstLL.analyzers.L1RateAnalyzer               import L1RateAnalyzer    
@@ -35,7 +36,7 @@ puFileData = '/afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_271036-284044
 ###################################################
 # Get all heppy options; set via "-o production" or "-o production=True"
 # production = True run on batch, production = False (or unset) run locally
-production         = getHeppyOption('production' , True)
+production         = getHeppyOption('production' , False)
 pick_events        = getHeppyOption('pick_events', False)
 ###################################################
 ###               HANDLE SAMPLES                ###
@@ -101,6 +102,26 @@ mainAna = cfg.Analyzer(
     onlyBX0 = True, # BE CAREFUL!
 )
 
+# see SM HTT TWiki
+# https://twiki.cern.ch/twiki/bin/viewauth/CMS/SMTauTau2016#Jet_Energy_Corrections
+jetAna = cfg.Analyzer(
+    JetAnalyzer,
+    name              = 'JetAnalyzer',
+    jetCol            = 'slimmedJets',
+    jetPt             = 20.,
+    jetEta            = 4.7,
+    relaxJetId        = False, # relax = do not apply jet ID
+    relaxPuJetId      = True, # relax = do not apply pileup jet ID
+    jerCorr           = False,
+    puJetIDDisc       = 'pileupJetId:fullDiscriminant',
+    recalibrateJets   = False, # don't recalibrate if you take the latest & greatest samples
+    applyL2L3Residual = 'MC',
+    mcGT              = '80X_mcRun2_asymptotic_2016_TrancheIV_v8',
+    dataGT            = '80X_dataRun2_2016SeptRepro_v7',
+    selectedLeptons   = [],
+    #jesCorr = 1., # Shift jet energy scale in terms of uncertainties (1 = +1 sigma)
+)
+
 treeProducer = cfg.Analyzer(
     L1RateTreeProducer,
     name = 'L1RateTreeProducer',
@@ -115,6 +136,7 @@ sequence = cfg.Sequence([
     triggerAna,
     vertexAna,
     pileUpAna,
+    jetAna,
     mainAna,
     treeProducer,
 ])
@@ -127,7 +149,7 @@ if not production:
     selectedComponents   = [comp]
     comp.splitFactor     = 1
     comp.fineSplitFactor = 1
-    comp.files           = comp.files[:5]
+    comp.files           = comp.files[:1]
 
 preprocessor = None
 
