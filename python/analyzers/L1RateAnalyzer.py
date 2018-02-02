@@ -2,9 +2,10 @@ import ROOT
 from itertools import product, combinations
 import math
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer   import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.HeppyCore.utils.deltar          import deltaR, deltaR2
+from PhysicsTools.Heppy.analyzers.core.Analyzer       import Analyzer
+from PhysicsTools.Heppy.analyzers.core.AutoHandle     import AutoHandle
+from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Jet, Muon
+from PhysicsTools.HeppyCore.utils.deltar              import deltaR, deltaR2
 
 from pdb import set_trace
 
@@ -24,6 +25,16 @@ class L1RateAnalyzer(Analyzer):
             'BXVector<GlobalAlgBlk>'
         )
 
+        self.handles['jets'] = AutoHandle(
+            'slimmedJets',
+            'std::vector<pat::Jet>'
+        )
+
+        self.handles['muons'] = AutoHandle(
+            'slimmedMuons',
+            'std::vector<pat::Muon>'
+        )
+
     def beginLoop(self, setup):
         super(L1RateAnalyzer, self).beginLoop(setup)
         self.counters.addCounter('L1Rate')
@@ -32,6 +43,9 @@ class L1RateAnalyzer(Analyzer):
 
     def process(self, event):
         self.readCollections(event.input)
+
+        # all jets
+        miniaodjets = [Jet(jet) for jet in self.handles['jets'].product()]
 
         # ugt decision
         event.ugt = self.handles['ugt'].product().at(0,0)
@@ -83,7 +97,39 @@ class L1RateAnalyzer(Analyzer):
 #             for mm in event.L1_muons_eta_2p5_q12: print mm.pt(), mm.eta(), mm.phi(), mm.hwQual()
 #             import pdb ; pdb.set_trace()
 
-#         import pdb ; pdb.set_trace()
+#         if event.run==305081: 
+
+        event.fakeL1mu = True
+        event.deltapt  = -9999.
+        event.isiso    = -99.
+        event.lowptjet = False
+
+        if len(event.L1_muons_eta_2p1_q12)>0 and event.L1_muons_eta_2p1_q12[0].pt()>=22.:
+        
+            print 'Jets, unfiltered'
+            for jet in miniaodjets: 
+                print jet, '\tpfJetId', jet.jetID("POG_PFID_Loose") , '\tpuJetId', jet.puJetId(), '\tbtag', jet.btag('pfCombinedInclusiveSecondaryVertexV2BJetTags')
+                if deltaR2(jet.eta(), jet.phi(), event.L1_muons_eta_2p1_q12[0].etaAtVtx(), event.L1_muons_eta_2p1_q12[0].phiAtVtx())<0.25:
+                    if jet.pt()<20.:
+                        event.lowptjet = True
+
+            print 'L1 muons'
+            for mu in event.L1_muons_eta_2p1_q12:
+                print 'pt %.2f\teta %.2f\tphi %.2f\tetaAtVtx %.2f\tphiAtVtx %.2f' %(mu.pt(), mu.eta(), mu.phi(), mu.etaAtVtx(), mu.phiAtVtx()) 
+                        
+            print 'offline muons'
+            for mm in [Muon(ii) for ii in self.handles['muons'].product()]:
+                print mm
+                
+                if deltaR2(mm.eta(), mm.phi(), event.L1_muons_eta_2p1_q12[0].etaAtVtx(), event.L1_muons_eta_2p1_q12[0].phiAtVtx())<0.25:
+                    event.fakeL1mu = False
+                    event.isiso    = int(mm.relIso()<1.)
+                    event.deltapt  = event.L1_muons_eta_2p1_q12[0].pt() - mm.pt()
+                     
+            # jj = miniaodjets[1]
+            # deltaR(jj.eta(), jj.phi(), mu.etaAtVtx(), mu.phiAtVtx())
+            
+#             import pdb ; pdb.set_trace()
 
         return True
 

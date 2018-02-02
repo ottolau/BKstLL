@@ -36,6 +36,13 @@ class L1RateTreeProducer(L1PurityTreeProducerBase):
         # book control seed
         self.var(self.tree, 'L1_SingleMu22er2p1')
 
+        # understand what shit's going on at L1
+        self.var(self.tree, 'is_fake_L1_mu')
+        self.var(self.tree, 'L1_minus_offline_mu_pt')
+        self.var(self.tree, 'is_offline_isomu')
+        self.var(self.tree, 'low_pt_jet')
+
+
     def process(self, event):
         '''
         '''
@@ -64,11 +71,17 @@ class L1RateTreeProducer(L1PurityTreeProducerBase):
         L1_muons_eta_2p1_q12_pt22 = [mm for mm in event.L1_muons_eta_2p1_q12 if mm.pt()>=22.]
         for ii, mu in enumerate(L1_muons_eta_2p1_q12_pt22):           
             if hasattr(mu, 'jet'):
-                self.fillJet(self.tree, 'mu_eta_2p1_q12_pt22_jet%d' %(ii+1)), mu.jet)
+                self.fillJet(self.tree, 'mu_eta_2p1_q12_pt22_jet%d' %(ii+1), mu.jet)
 #             import pdb ; pdb.set_trace()
         
 #         if len(event.L1_muons)>2: import pdb ; pdb.set_trace()
         self.fill(self.tree, 'L1_SingleMu22er2p1', event.ugt.getAlgoDecisionFinal(29))
+
+        # debug, comment me when you're done!
+        self.fill(self.tree, 'is_fake_L1_mu'         , event.fakeL1mu)
+        self.fill(self.tree, 'L1_minus_offline_mu_pt', event.deltapt )
+        self.fill(self.tree, 'is_offline_isomu'      , event.isiso   )
+        self.fill(self.tree, 'low_pt_jet'            , event.lowptjet)
         
         self.fillTree(event)
 

@@ -26,7 +26,7 @@ from CMGTools.BKstLL.analyzers.L1RateAnalyzer               import L1RateAnalyze
 from CMGTools.BKstLL.analyzers.L1RateTreeProducer           import L1RateTreeProducer
 
 # import samples, signal
-from CMGTools.BKstLL.samples.zerobias import ZeroBias_2017F
+from CMGTools.BKstLL.samples.hltphysics import EphemeralHLTPhysics_2017F
 
 puFileMC   = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Moriond17_PU25ns_V1.root'
 puFileData = '/afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_271036-284044_80bins.root'
@@ -41,10 +41,10 @@ pick_events        = getHeppyOption('pick_events', False)
 ###################################################
 ###               HANDLE SAMPLES                ###
 ###################################################
-samples = [ZeroBias_2017F]
+samples = [EphemeralHLTPhysics_2017F]
 
 for sample in samples:
-    sample.triggers  = ['HLT_ZeroBias_v%d' %i for i in range(1, 10)]
+    sample.triggers  = ['HLT_Physics_part%d_v7' %i for i in range(0, 8)]
     sample.splitFactor = splitFactor(sample, 1e5)
     sample.puFileData = puFileData
     sample.puFileMC   = puFileMC
@@ -57,89 +57,7 @@ selectedComponents = samples
 eventSelector = cfg.Analyzer(
     EventSelector,
     name='EventSelector',
-    toSelect=[
-         270651544 ,
-         685112686 ,
-         578098843 ,
-         319964730 ,
-         144176365 ,
-         155607171 ,
-          47904360 ,
-         196590218 ,
-        1040634440 ,
-         891877909 ,
-         891572013 ,
-         950544174 ,
-         954243056 ,
-         241846498 ,
-         600269532 ,
-         635462156 ,
-         216450941 ,
-         694776303 ,
-         773635111 ,
-         353462095 ,
-         121181049 ,
-         691880912 ,
-        1043024190 ,
-          11742081 ,
-         698778193 ,
-         112482815 ,
-         422864985 ,
-         427182711 ,
-         848727806 ,
-         947299043 ,
-         497395225 ,
-         146784021 ,
-         556866174 ,
-         278604090 ,
-         519764385 ,
-         968218247 ,
-         660689359 ,
-         732476041 ,
-         765161901 ,
-         813241572 ,
-         978998680 ,
-         185699573 ,
-        1032022681 ,
-        1032583535 ,
-        1032525490 ,
-         408752927 ,
-         407724174 ,
-         408983530 ,
-         738831113 ,
-          56482447 ,
-         110540676 ,
-          52119284 ,
-         311430236 ,
-         653755340 ,
-         541193330 ,
-         772841952 ,
-         772836449 ,
-         701224506 ,
-         702978127 ,
-         138603598 ,
-         870667207 ,
-         439120312 ,
-         616502913 ,
-         920258045 ,
-         978270550 ,
-          60020555 ,
-         815945572 ,
-         866252133 ,
-        1026947670 ,
-          17161695 ,
-         711858099 ,
-         724430255 ,
-         750260588 ,
-         479358239 ,
-          69903184 ,
-         352943658 ,
-         389866509 ,
-         639927666 ,
-         909743818 ,
-         910180069 ,
-         418429393 ,
-    ]
+    toSelect=[]
 )
 
 triggerAna = cfg.Analyzer(
@@ -206,7 +124,7 @@ treeProducer = cfg.Analyzer(
 ###                  SEQUENCE                   ###
 ###################################################
 sequence = cfg.Sequence([
-    eventSelector,
+#     eventSelector,
     jsonAna,
     triggerAna,
     vertexAna,
@@ -220,11 +138,11 @@ sequence = cfg.Sequence([
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    comp                 = ZeroBias_2017F
+    comp                 = EphemeralHLTPhysics_2017F
     selectedComponents   = [comp]
     comp.splitFactor     = 1
     comp.fineSplitFactor = 1
-#     comp.files           = comp.files[20:40]
+    comp.files           = comp.files[:10]
 
 preprocessor = None
 
