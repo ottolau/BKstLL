@@ -66,7 +66,7 @@ class L1RateAnalyzer(Analyzer):
         
         # append a reco jet (if it exists) to each L1 muon
         for mu in event.L1_muons:
-            jets = sorted([jj for jj in event.jets if deltaR2(jj.eta(), jj.phi(), mu.etaAtVtx(), mu.phiAtVtx()) < 0.16], key = lambda x : deltaR2(x, mu))
+            jets = sorted([jj for jj in miniaodjets if deltaR2(jj.eta(), jj.phi(), mu.etaAtVtx(), mu.phiAtVtx()) < 0.16], key = lambda x : deltaR2(x, mu))
             if len(jets):
                 mu.jet = jets[0]
         

@@ -28,12 +28,10 @@ BdKstEE = creator.makeMCComponentFromLocal(
 
 BdKstEE.files += [
     '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_firstbunch.root',
-    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_secondbunch.root',
     '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_fourthbunch.root',
+    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_secondbunch.root',
+    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_thirdbunch.root',
+    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_fifthbunch.root',
 ]
-
-# "/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17DRPremix-00038_step2_MINIAOD_firstbunch.root
-# "/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17DRPremix-00038_step2_MINIAOD_secondbunch.root
-# "/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17DRPremix-00038_step2_MINIAOD_thirdbunch.root
 
 

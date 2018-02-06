@@ -7,21 +7,21 @@ from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 
 creator = ComponentCreator()
 
-QCD_Pt_15to30     = creator.makeMCComponent("QCD_Pt_15to30"    , "/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"    , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_30to50     = creator.makeMCComponent("QCD_Pt_30to50"    , "/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"    , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_50to80     = creator.makeMCComponent("QCD_Pt_50to80"    , "/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM"    , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_80to120    = creator.makeMCComponent("QCD_Pt_80to120"   , "/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v3/MINIAODSIM"   , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_120to170   = creator.makeMCComponent("QCD_Pt_120to170"  , "/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"  , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_170to300   = creator.makeMCComponent("QCD_Pt_170to300"  , "/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"  , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_300to470   = creator.makeMCComponent("QCD_Pt_300to470"  , "/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"  , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_470to600   = creator.makeMCComponent("QCD_Pt_470to600"  , "/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"  , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_600to800   = creator.makeMCComponent("QCD_Pt_600to800"  , "/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM"  , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_800to1000  = creator.makeMCComponent("QCD_Pt_800to1000" , "/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM" , "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_1000to1400 = creator.makeMCComponent("QCD_Pt_1000to1400", "/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_1400to1800 = creator.makeMCComponent("QCD_Pt_1400to1800", "/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_1800to2400 = creator.makeMCComponent("QCD_Pt_1800to2400", "/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_2400to3200 = creator.makeMCComponent("QCD_Pt_2400to3200", "/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True,)
-QCD_Pt_3200toInf  = creator.makeMCComponent("QCD_Pt_3200toInf" , "/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM" , "CMS", ".*root", 1.0, useAAA=True,)
+QCD_Pt_15to30     = creator.makeMCComponent("QCD_Pt_15to30"    , "/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"    , "CMS", ".*root", 1837410000          , useAAA=True,)
+QCD_Pt_30to50     = creator.makeMCComponent("QCD_Pt_30to50"    , "/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"    , "CMS", ".*root",  140932000          , useAAA=True,)
+QCD_Pt_50to80     = creator.makeMCComponent("QCD_Pt_50to80"    , "/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM"    , "CMS", ".*root",   19204300          , useAAA=True,)
+QCD_Pt_80to120    = creator.makeMCComponent("QCD_Pt_80to120"   , "/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v3/MINIAODSIM"   , "CMS", ".*root",    2762530          , useAAA=True,)
+QCD_Pt_120to170   = creator.makeMCComponent("QCD_Pt_120to170"  , "/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"  , "CMS", ".*root",     471100          , useAAA=True,)
+QCD_Pt_170to300   = creator.makeMCComponent("QCD_Pt_170to300"  , "/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"  , "CMS", ".*root",     117276          , useAAA=True,)
+QCD_Pt_300to470   = creator.makeMCComponent("QCD_Pt_300to470"  , "/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"  , "CMS", ".*root",       7823          , useAAA=True,)
+QCD_Pt_470to600   = creator.makeMCComponent("QCD_Pt_470to600"  , "/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM"  , "CMS", ".*root",        648.2        , useAAA=True,)
+QCD_Pt_600to800   = creator.makeMCComponent("QCD_Pt_600to800"  , "/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM"  , "CMS", ".*root",        186.9        , useAAA=True,)
+QCD_Pt_800to1000  = creator.makeMCComponent("QCD_Pt_800to1000" , "/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM" , "CMS", ".*root",         32.293      , useAAA=True,)
+QCD_Pt_1000to1400 = creator.makeMCComponent("QCD_Pt_1000to1400", "/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM", "CMS", ".*root",          9.4183     , useAAA=True,)
+QCD_Pt_1400to1800 = creator.makeMCComponent("QCD_Pt_1400to1800", "/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM", "CMS", ".*root",          0.84265    , useAAA=True,)
+QCD_Pt_1800to2400 = creator.makeMCComponent("QCD_Pt_1800to2400", "/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM", "CMS", ".*root",          0.114943   , useAAA=True,)
+QCD_Pt_2400to3200 = creator.makeMCComponent("QCD_Pt_2400to3200", "/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v4/MINIAODSIM", "CMS", ".*root",          0.00682981 , useAAA=True,)
+QCD_Pt_3200toInf  = creator.makeMCComponent("QCD_Pt_3200toInf" , "/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/RunIISummer17MiniAOD-92X_upgrade2017_realistic_v10-v5/MINIAODSIM" , "CMS", ".*root",          0.000165445, useAAA=True,)
 
 qcd_samples = [
     QCD_Pt_15to30    ,
@@ -40,6 +40,17 @@ qcd_samples = [
     QCD_Pt_2400to3200,
     QCD_Pt_3200toInf ,
 ]
+
+
+
+
+
+QCD_Pt15to30          = kreator.makeMCComponent("QCD_Pt15to30"     , "/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"     , "CMS" , ".*root"          , 1837410000)
+QCD_Pt30to50          = kreator.makeMCComponent("QCD_Pt30to50"         , "/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"      , "CMS" , ".*root"     ,  140932000)
+QCD_Pt50to80          = kreator.makeMCComponent("QCD_Pt50to80"         , "/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root"            ,   19204300)
+QCD_Pt80to120_ext2    = kreator.makeMCComponent("QCD_Pt80to120_ext2"   , "/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM", "CMS", ".*root"      ,    2762530)
+QCD_Pt120to170_ext    = kreator.makeMCComponent("QCD_Pt120to170_ext"   , "/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM",    "CMS" , ".*root" ,     471100)
+QCD_Pt170to300_ext    = kreator.makeMCComponent("QCD_Pt170to300_ext"   , "/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM"   , "CMS" , ".*root" , 117276)
 
 
 
