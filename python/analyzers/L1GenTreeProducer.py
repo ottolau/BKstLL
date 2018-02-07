@@ -68,7 +68,7 @@ class L1GenTreeProducer(L1PurityTreeProducerBase):
         tomatch = event.gen_bmesons + event.gen_dmesons + event.gen_prompt_jpsis + event.gen_prompt_upsilons + event.gen_vbosons + event.gen_topquarks
         tomatch.sort(key = lambda x : x.pt(), reverse = True)
 
-        fired, matched, index, matched_particle = single_muon(event.L1_muons, 22, 2.1043125, 12, matches=tomatch) 
+        fired, matched, index = single_muon(event.L1_muons, 22, 2.1043125, 12, matches=tomatch) 
 
         if not fired                                    : self.fill(self.tree, 'L1_SingleMu_22_eta2p1_Q12', -1)
         elif index<0                                    : self.fill(self.tree, 'L1_SingleMu_22_eta2p1_Q12',  0)
