@@ -1,7 +1,7 @@
 import ROOT
 from CMGTools.BKstLL.analyzers.L1PurityTreeProducerBase import L1PurityTreeProducerBase
 from CMGTools.BKstLL.analyzers.L1Seeds import single_muon, di_muon, tri_muon
-from PhysicsTools.HeppyCore.utils.deltar import deltaR
+from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi, bestMatch
 from itertools import combinations
 
 class L1GenTreeProducer(L1PurityTreeProducerBase):
@@ -34,6 +34,12 @@ class L1GenTreeProducer(L1PurityTreeProducerBase):
         self.bookParticle(self.tree, 'mu_eta_2p1_q12_pt22_mu3')
         self.bookParticle(self.tree, 'mu_eta_2p1_q12_pt22_mu4')
 
+        # the particle that fired the seed
+        self.bookGenParticle(self.tree, 'mu_eta_2p1_q12_pt22_particle1')
+        self.bookGenParticle(self.tree, 'mu_eta_2p1_q12_pt22_particle2')
+        self.bookGenParticle(self.tree, 'mu_eta_2p1_q12_pt22_particle3')
+        self.bookGenParticle(self.tree, 'mu_eta_2p1_q12_pt22_particle4')
+
         # jets matching to L1 muons
         self.bookJet(self.tree, 'mu_eta_2p1_q12_pt22_jet1')
         self.bookJet(self.tree, 'mu_eta_2p1_q12_pt22_jet2')
@@ -62,7 +68,7 @@ class L1GenTreeProducer(L1PurityTreeProducerBase):
         tomatch = event.gen_bmesons + event.gen_dmesons + event.gen_prompt_jpsis + event.gen_prompt_upsilons + event.gen_vbosons + event.gen_topquarks
         tomatch.sort(key = lambda x : x.pt(), reverse = True)
 
-        fired, matched, index = single_muon(event.L1_muons, 22, 2.1, 12, matches=tomatch) 
+        fired, matched, index, matched_particle = single_muon(event.L1_muons, 22, 2.1043125, 12, matches=tomatch) 
 
         if not fired                                    : self.fill(self.tree, 'L1_SingleMu_22_eta2p1_Q12', -1)
         elif index<0                                    : self.fill(self.tree, 'L1_SingleMu_22_eta2p1_Q12',  0)
@@ -80,6 +86,9 @@ class L1GenTreeProducer(L1PurityTreeProducerBase):
             self.fillParticle(self.tree, 'mu_eta_2p1_q12_pt22_mu%d' %(ii+1), mu)
             if hasattr(mu, 'jet'):
                 self.fillJet(self.tree, 'mu_eta_2p1_q12_pt22_jet%d' %(ii+1), mu.jet)
+            if index>=0 and hasattr(tomatch[index], 'finalchargeddaughters'):
+                if tomatch[index].finalchargeddaughters:
+                    self.fillGenParticle(self.tree, 'mu_eta_2p1_q12_pt22_particle%d' %(ii+1), bestMatch(mu, tomatch[index].finalchargeddaughters))
                     
         self.fillTree(event)
 

@@ -49,7 +49,26 @@ bins = [
 
 chain = ROOT.TChain('tree')
 
-samples = glob('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/*Chunk*/L1PurityTreeProducer/tree.root')
+# samples = glob('/eos/cms/store/group/phys_tau/BKstLL/L1Purity_v3/*Chunk*/L1PurityTreeProducer/tree.root')
+
+# samples = [
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt15to30/QCD_Pt_15to30/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt30to50/QCD_Pt_30to50/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt50to80/QCD_Pt_50to80/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt80to120/QCD_Pt_80to120/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt120to170/QCD_Pt_120to170/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt170to300/QCD_Pt_170to300/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt300to470/QCD_Pt_300to470/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt470to600/QCD_Pt_470to600/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt800to1000/QCD_Pt_800to1000/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt1000to1400/QCD_Pt_1000to1400/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt1400to1800/QCD_Pt_1400to1800/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt1800to2400/QCD_Pt_1800to2400/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt2400to3200/QCD_Pt_2400to3200/L1GenTreeProducer/tree.root',
+#     '/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/pt3200toInf/QCD_Pt_3200toInf/L1GenTreeProducer/tree.root',
+# ]
+
+samples = glob('/eos/cms/store/group/phys_tau/BKstLL/L1Gen_v2/*Chunk*/L1GenTreeProducer/tree.root')
 
 print 'loading samples ...'
 for sample in samples:

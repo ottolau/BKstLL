@@ -40,19 +40,3 @@ qcd_samples = [
     QCD_Pt_2400to3200,
     QCD_Pt_3200toInf ,
 ]
-
-
-
-
-
-QCD_Pt15to30          = kreator.makeMCComponent("QCD_Pt15to30"     , "/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"     , "CMS" , ".*root"          , 1837410000)
-QCD_Pt30to50          = kreator.makeMCComponent("QCD_Pt30to50"         , "/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM"      , "CMS" , ".*root"     ,  140932000)
-QCD_Pt50to80          = kreator.makeMCComponent("QCD_Pt50to80"         , "/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root"            ,   19204300)
-QCD_Pt80to120_ext2    = kreator.makeMCComponent("QCD_Pt80to120_ext2"   , "/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM", "CMS", ".*root"      ,    2762530)
-QCD_Pt120to170_ext    = kreator.makeMCComponent("QCD_Pt120to170_ext"   , "/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM",    "CMS" , ".*root" ,     471100)
-QCD_Pt170to300_ext    = kreator.makeMCComponent("QCD_Pt170to300_ext"   , "/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM"   , "CMS" , ".*root" , 117276)
-
-
-
-
-
