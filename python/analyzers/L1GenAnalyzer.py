@@ -71,8 +71,15 @@ class L1GenAnalyzer(Analyzer):
  
         all_gen_particles = [ip for ip in pruned_gen_particles] + [ip for ip in packed_gen_particles]
          
-        event.gen_bmesons         = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 500 and abs(pp.pdgId()) < 600 and pp.isPromptDecayed()]
-        event.gen_dmesons         = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 400 and abs(pp.pdgId()) < 500 and pp.isPromptDecayed()]
+        # HOOK RM
+        event.pruned_gen_particles = pruned_gen_particles
+        event.packed_gen_particles = packed_gen_particles
+        event.all_gen_particles    = all_gen_particles
+         
+        event.gen_bmesons         = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 500  and abs(pp.pdgId()) < 600  and pp.isPromptDecayed()]
+        event.gen_dmesons         = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 400  and abs(pp.pdgId()) < 500  and pp.isPromptDecayed()]
+        event.gen_bbarions        = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 5000 and abs(pp.pdgId()) < 6000 and pp.isPromptDecayed()]
+        event.gen_cbarions        = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 4000 and abs(pp.pdgId()) < 5000 and pp.isPromptDecayed()]
         event.gen_prompt_jpsis    = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) in [443, 100443, 30443, 9000443, 9010443, 9020443] and pp.isPromptDecayed()]
         event.gen_prompt_upsilons = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) in [553, 100553, 200553, 300553] and pp.isPromptDecayed()]
         event.gen_vbosons         = event.genVBosons
@@ -88,7 +95,7 @@ class L1GenAnalyzer(Analyzer):
 #             import pdb ; pdb.set_trace()
             
         # walk down the lineage of the B mesons and find the final state muons and charged particles
-        for ip in event.gen_bmesons + event.gen_dmesons + event.gen_prompt_jpsis + event.gen_prompt_upsilons + event.gen_vbosons + event.gen_topquarks:
+        for ip in event.gen_bmesons + event.gen_dmesons + event.gen_prompt_jpsis + event.gen_prompt_upsilons + event.gen_vbosons + event.gen_topquarks + event.gen_cbarions + event.gen_bbarions:
             if getattr(self.cfg_ana, 'verbose', False):
                 print 'PdgId : %s   pt : %s  eta : %s   phi : %s' %(ip.pdgId(), ip.pt(), ip.eta(), ip.phi())    
                 print '     daughters'
