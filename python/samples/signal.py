@@ -20,18 +20,18 @@ BdKstMM = creator.makeMCComponent(
 BdKstEE = creator.makeMCComponentFromLocal(
     "BdKstEE", 
     "XXX", 
-#     path = "/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/", 
-    path = "/afs/cern.ch/user/s/slacapra/public/Kstee/",
+    path = "/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/", 
+#     path = "/afs/cern.ch/user/s/slacapra/public/Kstee/",
     pattern=".*MiniAOD-00038.*root", 
     xSec=1.0, 
 )
 
-BdKstEE.files += [
-    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_firstbunch.root',
-    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_fourthbunch.root',
-    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_secondbunch.root',
-    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_thirdbunch.root',
-    '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_fifthbunch.root',
-]
+# BdKstEE.files += [
+#     '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_firstbunch.root',
+#     '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_fourthbunch.root',
+#     '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_secondbunch.root',
+#     '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_thirdbunch.root',
+#     '/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/BPH-RunIIFall17MiniAOD-00038_MINIAOD_fifthbunch.root',
+# ]
 
 
