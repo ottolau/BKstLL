@@ -9,20 +9,20 @@ from CMGTools.RootTools.utils.splitFactor import splitFactor
 
 # import all analysers:
 # Heppy analyzers
-from PhysicsTools.Heppy.analyzers.core.JSONAnalyzer         import JSONAnalyzer
-from PhysicsTools.Heppy.analyzers.core.SkimAnalyzerCount    import SkimAnalyzerCount
-from PhysicsTools.Heppy.analyzers.core.EventSelector        import EventSelector
-from PhysicsTools.Heppy.analyzers.objects.VertexAnalyzer    import VertexAnalyzer
-from PhysicsTools.Heppy.analyzers.core.PileUpAnalyzer       import PileUpAnalyzer
-from PhysicsTools.Heppy.analyzers.gen.GeneratorAnalyzer     import GeneratorAnalyzer
-from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer     import LHEWeightAnalyzer
+from PhysicsTools.Heppy.analyzers.core.JSONAnalyzer      import JSONAnalyzer
+from PhysicsTools.Heppy.analyzers.core.SkimAnalyzerCount import SkimAnalyzerCount
+from PhysicsTools.Heppy.analyzers.core.EventSelector     import EventSelector
+from PhysicsTools.Heppy.analyzers.objects.VertexAnalyzer import VertexAnalyzer
+from PhysicsTools.Heppy.analyzers.core.PileUpAnalyzer    import PileUpAnalyzer
+from PhysicsTools.Heppy.analyzers.gen.GeneratorAnalyzer  import GeneratorAnalyzer
+from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer  import LHEWeightAnalyzer
         
 # Tau-tau analysers        
-from CMGTools.H2TauTau.proto.analyzers.JetAnalyzer          import JetAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.JetAnalyzer       import JetAnalyzer
 
 # WTau3Mu analysers
-from CMGTools.BKstLL.analyzers.BKstLLGenAnalyzer            import BKstLLGenAnalyzer    
-from CMGTools.BKstLL.analyzers.BKstLLGenTreeProducer        import BKstLLGenTreeProducer
+from CMGTools.BKstLL.analyzers.BKstLLGenAnalyzer         import BKstLLGenAnalyzer    
+from CMGTools.BKstLL.analyzers.BKstLLGenTreeProducer     import BKstLLGenTreeProducer
 
 # import samples, signal
 from CMGTools.BKstLL.samples.signal import BdKstEE
@@ -144,7 +144,7 @@ if not production:
     selectedComponents   = [comp]
     comp.splitFactor     = 1
     comp.fineSplitFactor = 1
-#     comp.files           = comp.files[1:]
+    comp.files           = comp.files[:1]
 #     comp.files           = [
 #         'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv2/BdToKstarMuMu_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/001CD385-A2B9-E611-8F02-FA163EC1154A.root',
 #     ]

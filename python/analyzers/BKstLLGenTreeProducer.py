@@ -1,7 +1,7 @@
 import ROOT
 from CMGTools.BKstLL.analyzers.L1PurityTreeProducerBase import L1PurityTreeProducerBase
 from CMGTools.BKstLL.analyzers.L1Seeds import single_muon, di_muon, tri_muon
-from PhysicsTools.HeppyCore.utils.deltar import deltaR
+from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
 from itertools import combinations
 
 class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
@@ -16,6 +16,10 @@ class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
 
         # gen pt hat
         self.var(self.tree, 'qscale')
+        
+        # gen tagging muon
+        self.bookGenParticle(self.tree, 'tag_mu')
+        self.bookParticle   (self.tree, 'tag_mu_reco')
                 
         # gen level B mesons from the hard interaction, sorted by pt
         self.var(self.tree, 'nbmesons')
@@ -26,17 +30,25 @@ class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
         self.bookGenParticle(self.tree, 'b2')
         self.bookGenParticle(self.tree, 'b3')
 
-        self.bookJet(self.tree, 'b1_jet')
-        self.bookJet(self.tree, 'b2_jet')
-        self.bookJet(self.tree, 'b3_jet')
+        self.bookJet(self.tree, 'b1_jet', fill_extra=True)
+        self.bookJet(self.tree, 'b2_jet', fill_extra=True)
+        self.bookJet(self.tree, 'b3_jet', fill_extra=True)
+
+        # bbbar topology
+        self.var(self.tree, 'dr_btag_bprobe'   )
+        self.var(self.tree, 'deta_btag_bprobe' )
+        self.var(self.tree, 'dphi_btag_bprobe' )
+        self.var(self.tree, 'dr_mutag_bprobe'  )
+        self.var(self.tree, 'deta_mutag_bprobe')
+        self.var(self.tree, 'dphi_mutag_bprobe')
 
         # first two gen level muons from B mesons, sorted by pt
-        self.bookGenParticle(self.tree, 'bd_lp')
-        self.bookGenParticle(self.tree, 'bd_lm')
-        self.bookGenParticle(self.tree, 'bd_pi')
-        self.bookGenParticle(self.tree, 'bd_k' )
-        self.bookJet(self.tree, 'bd_jet')
-
+        self.bookGenParticle(self.tree, 'bd_lp') ; self.bookParticle(self.tree, 'bd_lp_reco')
+        self.bookGenParticle(self.tree, 'bd_lm') ; self.bookParticle(self.tree, 'bd_lm_reco')
+        self.bookGenParticle(self.tree, 'bd_pi') ; self.bookParticle(self.tree, 'bd_pi_reco')
+        self.bookGenParticle(self.tree, 'bd_k' ) ; self.bookParticle(self.tree, 'bd_k_reco' )
+        self.bookJet(self.tree, 'bd_jet', fill_extra=True)
+        self.var(self.tree, 'bd_dr' )
 
         # L1 seeds. Bool, either fired or not
         self.var(self.tree, 'L1_SingleMu_22_eta2p1_Q12'          )
@@ -125,25 +137,50 @@ class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
 
         self.fillEvent(self.tree, event)
         self.fill(self.tree, 'qscale', event.qscale)
-
         
         self.fill(self.tree, 'nbmesons', len(event.gen_bmesons))
-        
+
+        # gen tagging muon
+        if hasattr(event, 'thetagmu'):
+            self.fillGenParticle(self.tree, 'tag_mu', event.thetagmu)
+            if hasattr(event.thetagmu, 'reco'):
+                self.fillParticle(self.tree, 'tag_mu_reco', event.thetagmu.reco)
+
         self.fillGenParticle(self.tree, 'bd', event.kstll)
+        self.fill(self.tree, 'bd_dr', event.kstll.dr)
+
         for jet in event.jets:
             if deltaR(event.kstll, jet) < 0.4:
-                self.fillJet(self.tree, 'bd_jet', jet)
+                self.fillJet(self.tree, 'bd_jet', jet, fill_extra=True)
 
         self.fillGenParticle(self.tree, 'bd_lp', event.kstll.lp)
+                
+        if hasattr(event.kstll.lp, 'reco'):
+            self.fillParticle(self.tree, 'bd_lp_reco', event.kstll.lp.reco)       
         self.fillGenParticle(self.tree, 'bd_lm', event.kstll.lm)
+        if hasattr(event.kstll.lm, 'reco'):
+            self.fillParticle(self.tree, 'bd_lm_reco', event.kstll.lm.reco)
         self.fillGenParticle(self.tree, 'bd_pi', event.kstll.pi)
+        if hasattr(event.kstll.pi, 'reco'):
+            self.fillParticle(self.tree, 'bd_pi_reco', event.kstll.pi.reco)
         self.fillGenParticle(self.tree, 'bd_k' , event.kstll.k )
+        if hasattr(event.kstll.k, 'reco'):
+            self.fillParticle(self.tree, 'bd_k_reco', event.kstll.k.reco)
 
         for i, ib in enumerate(event.clean_gen_bmesons[:3]):
             self.fillGenParticle(self.tree, 'b%d' %(i+1), ib)
             for jet in event.jets:
                 if deltaR(ib, jet) < 0.4:
-                    self.fillJet(self.tree, 'b%d_jet' %(i+1), jet)
+                    self.fillJet(self.tree, 'b%d_jet' %(i+1), jet, fill_extra=True)
+
+        if len(event.clean_gen_bmesons)>0:
+            self.fill(self.tree, 'dr_btag_bprobe'   , deltaR  (event.clean_gen_bmesons[0], event.kstll)             )
+            self.fill(self.tree, 'deta_btag_bprobe' , abs     (event.clean_gen_bmesons[0].eta() - event.kstll.eta()))
+            self.fill(self.tree, 'dphi_btag_bprobe' , deltaPhi(event.clean_gen_bmesons[0].phi(), event.kstll.phi()) )
+        if hasattr(event, 'thetagmu'):
+            self.fill(self.tree, 'dr_mutag_bprobe'  , deltaR  (event.thetagmu, event.kstll)                         )
+            self.fill(self.tree, 'deta_mutag_bprobe', abs     (event.thetagmu.eta() - event.kstll.eta())            )
+            self.fill(self.tree, 'dphi_mutag_bprobe', deltaPhi(event.thetagmu.phi(), event.kstll.phi())             )
                         
         fired, matched, index = single_muon(event.L1_muons, 22, 2.1, 12, matches=event.clean_gen_bmesons); self.fill(self.tree, 'L1_SingleMu_22_eta2p1_Q12', fired) ; self.fill(self.tree, 'matched_L1_SingleMu_22_eta2p1_Q12', int(matched) * (index+1))
         

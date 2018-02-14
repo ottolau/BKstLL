@@ -2,9 +2,12 @@ import ROOT
 from itertools import product, combinations
 import math
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer   import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.HeppyCore.utils.deltar          import deltaR, deltaR2
+from PhysicsTools.Heppy.analyzers.core.Analyzer      import Analyzer
+from PhysicsTools.Heppy.analyzers.core.AutoHandle    import AutoHandle
+from PhysicsTools.HeppyCore.utils.deltar             import deltaR, deltaR2, bestMatch
+from PhysicsTools.Heppy.physicsobjects.Muon          import Muon
+from PhysicsTools.Heppy.physicsobjects.Electron      import Electron
+from PhysicsTools.Heppy.physicsobjects.PhysicsObject import PhysicsObject
 
 from pdb import set_trace
 
@@ -34,6 +37,27 @@ class BKstLLGenAnalyzer(Analyzer):
             'GenEventInfoProduct'
         )
 
+        self.handles['electrons'] = AutoHandle(
+            'slimmedElectrons',
+            'std::vector<pat::Electron>'
+        )
+
+        self.handles['muons'] = AutoHandle(
+            'slimmedMuons',
+            'std::vector<pat::Muon>'
+        )
+
+        self.handles['losttracks'] = AutoHandle(
+            'lostTracks',
+            'std::vector<pat::PackedCandidate>'
+        )
+
+        self.handles['pfcands'] = AutoHandle(
+            'packedPFCandidates',
+            'std::vector<pat::PackedCandidate>'
+        )
+
+
     def beginLoop(self, setup):
         super(BKstLLGenAnalyzer, self).beginLoop(setup)
         self.counters.addCounter('BKstLLGenAnalyzer')
@@ -49,9 +73,39 @@ class BKstLLGenAnalyzer(Analyzer):
         # attach qscale (pt hat) to the event
         event.qscale = self.mchandles['genInfo'].product().qScale()
 
+        # get the tracks
+        allpf      = map(PhysicsObject, self.handles['pfcands'   ].product())
+        losttracks = map(PhysicsObject, self.handles['losttracks'].product())
+
+        # merge the track collections
+        event.alltracks = sorted([tt for tt in allpf + losttracks if tt.charge() != 0 and abs(tt.pdgId()) not in (11,13)], key = lambda x : x.pt(), reverse = True)
+
+#         import pdb ; pdb.set_trace()
+
+        # get the offline electrons and muons
+        event.electrons = map(Electron, self.handles['electrons'].product())
+        event.muons     = map(Muon    , self.handles['muons'    ].product())
+
         # find the gen B mesons from the hard scattering
         pruned_gen_particles = self.mchandles['prunedGenParticles'].product()
         packed_gen_particles = self.mchandles['packedGenParticles'].product()
+        all_gen_particles = [ip for ip in pruned_gen_particles] + [ip for ip in packed_gen_particles]
+
+        # match gen mu to offline mu
+        genmus = [ii for ii in all_gen_particles if abs(ii.pdgId())==13 and ii.status()==1]
+        for imu in genmus:
+            bm, dr = bestMatch(imu, event.muons)
+            if dr<0.3:
+                imu.reco = bm
+        if len(genmus)>0:
+            event.thetagmu = sorted(genmus, key = lambda x : x.pt(), reverse = True)[0]
+
+        # match gen ele to offline ele
+        geneles = [ii for ii in all_gen_particles if abs(ii.pdgId())==11 and ii.status()==1]
+        for iele in geneles:
+            bm, dr = bestMatch(iele, event.electrons)
+            if dr<0.3:
+                iele.reco = bm
         
         event.gen_bmesons  = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 500 and abs(pp.pdgId()) < 600 and pp.isPromptDecayed()]
 
@@ -82,15 +136,23 @@ class BKstLLGenAnalyzer(Analyzer):
             ip.finaldaughters        = sorted(finaldaughters, key = lambda x : x.pt(), reverse = True)
 
         for ib0 in event.gen_b0mesons:
-            isit, lp, lm, pi, k = self.isKstLL(ib0, abs(self.cfg_ana.flavour)) 
+            if   abs(self.cfg_ana.flavour)==11 : togenmatchleptons = event.electrons
+            elif abs(self.cfg_ana.flavour)==13 : togenmatchleptons = event.muons
+            else                               : print 'you can only pick either pdgId 11 or 13' ; raise
+            isit, lp, lm, pi, k = self.isKstLL(ib0, togenmatchleptons, event.alltracks, abs(self.cfg_ana.flavour)) 
             if isit:
                 event.kstll    = ib0
                 event.kstll.lp = lp
                 event.kstll.lm = lm
                 event.kstll.pi = pi
                 event.kstll.k  = k 
+                event.kstll.dr = min([deltaR(event.kstll, jj) for jj in [lp, lm, pi, k]])
                 break # yeah, only one at a time, mate!
         
+#         if hasattr(event.kstll.lp, 'reco') and hasattr(event.kstll.lm, 'reco'):
+#             if event.kstll.lp.reco.pt() ==  event.kstll.lm.reco.pt():
+#                 import pdb ; pdb.set_trace()
+            
         if not hasattr(event, 'kstll'):
             return False
         self.counters.counter('BKstLLGenAnalyzer').inc('has a good gen B0->K*LL')
@@ -142,9 +204,8 @@ class BKstLLGenAnalyzer(Analyzer):
         
         return True
 
-
     @staticmethod
-    def isKstLL(b0meson, flav=13):
+    def isKstLL(b0meson, togenmatchleptons, togenmatchhadrons, flav=13):
 #         isB0 = (b0meson.pdgId()==511)
 #         isAntiB0 = (not isB0)
         # positive-charged leptons
@@ -155,6 +216,20 @@ class BKstLLGenAnalyzer(Analyzer):
         pis = [ip for ip in b0meson.finaldaughters if abs(ip.pdgId())== 211]
         # kaons from K*
         ks  = [ip for ip in b0meson.finaldaughters if abs(ip.pdgId())== 321]
+
+        for ilep in lps+lms:
+            # avoid matching the same particle twice, use the charge to distinguish (charge flip not accounted...)
+            tomatch = [jj for jj in togenmatchleptons if jj.charge()==ilep.charge()]
+            bm, dr = bestMatch(ilep, tomatch)
+            if dr<0.3:
+                ilep.reco = bm
+
+        for ihad in pis+ks:
+            # avoid matching the same particle twice, use the charge to distinguish (charge flip not accounted...)
+            tomatch = [jj for jj in togenmatchhadrons if jj.charge()==ihad.charge()]
+            bm, dr = bestMatch(ihad, tomatch)
+            if dr<0.3:
+                ihad.reco = bm
         
         if len(lps) == len(lms) == len(pis) == len(ks) == 1:
             return True, lps[0], lms[0], pis[0], ks[0]
