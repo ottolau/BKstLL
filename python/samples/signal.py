@@ -35,3 +35,10 @@ BdKstEE = creator.makeMCComponentFromLocal(
 # ]
 
 
+BdKstEEOnlyMuGenFilter = creator.makeMCComponentFromLocal(
+    "BdKstEEOnlyMuGenFilter", 
+    "XXX", 
+    path = "/eos/cms/store/group/phys_bphys/fiorendi/13TeV/MC/B0KStarEE/OnlyMUGENfilter/", 
+    pattern=".*MiniAOD-00038.*root", 
+    xSec=1.0, 
+)

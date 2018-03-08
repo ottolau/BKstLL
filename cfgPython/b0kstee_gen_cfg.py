@@ -25,7 +25,7 @@ from CMGTools.BKstLL.analyzers.BKstLLGenAnalyzer         import BKstLLGenAnalyze
 from CMGTools.BKstLL.analyzers.BKstLLGenTreeProducer     import BKstLLGenTreeProducer
 
 # import samples, signal
-from CMGTools.BKstLL.samples.signal import BdKstEE
+from CMGTools.BKstLL.samples.signal import BdKstEE, BdKstEEOnlyMuGenFilter
 
 puFileMC   = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Moriond17_PU25ns_V1.root'
 puFileData = '/afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_271036-284044_80bins.root'
@@ -44,7 +44,7 @@ samples = [BdKstEE]
 
 for sample in samples:
     sample.triggers  = ['HLT_DoubleMu3_Trk_Tau3mu_v%d' %i for i in range(3, 12)]
-    sample.splitFactor = splitFactor(sample, 1e5)
+    sample.splitFactor = splitFactor(sample, 2e4)
     sample.puFileData = puFileData
     sample.puFileMC   = puFileMC
 
@@ -140,11 +140,12 @@ sequence = cfg.Sequence([
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
+#     comp                 = BdKstEEOnlyMuGenFilter # BdKstEE
     comp                 = BdKstEE
     selectedComponents   = [comp]
     comp.splitFactor     = 1
-    comp.fineSplitFactor = 1
-    comp.files           = comp.files[:1]
+    comp.fineSplitFactor = 4
+#     comp.files           = comp.files[:1]
 #     comp.files           = [
 #         'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv2/BdToKstarMuMu_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/001CD385-A2B9-E611-8F02-FA163EC1154A.root',
 #     ]
