@@ -22,21 +22,6 @@ class BKstLLGenAnalyzer(Analyzer):
             'BXVector<l1t::Muon>'
         )
 
-        self.mchandles['prunedGenParticles'] = AutoHandle(
-            'prunedGenParticles',
-            'std::vector<reco::GenParticle>'
-        )
-
-        self.mchandles['packedGenParticles'] = AutoHandle(
-            'packedGenParticles',
-            'std::vector<pat::PackedGenParticle>'
-        )
-
-        self.mchandles['genInfo'] = AutoHandle(
-            'generator',
-            'GenEventInfoProduct'
-        )
-
         self.handles['electrons'] = AutoHandle(
             'slimmedElectrons',
             'std::vector<pat::Electron>'
@@ -70,9 +55,6 @@ class BKstLLGenAnalyzer(Analyzer):
 
         self.counters.counter('BKstLLGenAnalyzer').inc('all events')
 
-        # attach qscale (pt hat) to the event
-        event.qscale = self.mchandles['genInfo'].product().qScale()
-
         # get the tracks
         allpf      = map(PhysicsObject, self.handles['pfcands'   ].product())
         losttracks = map(PhysicsObject, self.handles['losttracks'].product())
@@ -80,16 +62,9 @@ class BKstLLGenAnalyzer(Analyzer):
         # merge the track collections
         event.alltracks = sorted([tt for tt in allpf + losttracks if tt.charge() != 0 and abs(tt.pdgId()) not in (11,13)], key = lambda x : x.pt(), reverse = True)
 
-#         import pdb ; pdb.set_trace()
-
         # get the offline electrons and muons
         event.electrons = map(Electron, self.handles['electrons'].product())
         event.muons     = map(Muon    , self.handles['muons'    ].product())
-
-        # find the gen B mesons from the hard scattering
-        pruned_gen_particles = self.mchandles['prunedGenParticles'].product()
-        packed_gen_particles = self.mchandles['packedGenParticles'].product()
-        all_gen_particles = [ip for ip in pruned_gen_particles] + [ip for ip in packed_gen_particles]
 
         # match gen mu to offline mu
         genmus = [ii for ii in all_gen_particles if abs(ii.pdgId())==13 and ii.status()==1]
