@@ -70,9 +70,6 @@ namespace cmg{
       // transien track builder handle
       edm::ESHandle<TransientTrackBuilder> ttrack_builder;
       
-      // transient track (from electron GSF track)
-      reco::TransientTrack eleTtk;
-      
   };
 }
 
@@ -80,7 +77,8 @@ cmg::AddElectronTransientTrack::AddElectronTransientTrack(const edm::ParameterSe
   eleSrc_( consumes<edm::View<pat::Electron>>(iConfig.getParameter<edm::InputTag>("patEleSrc") ) )
 { 
   // try with transient track record
-  produces<std::vector<std::pair<edm::Ptr<pat::Electron>, reco::TransientTrack>>> ("eleTtkMap");
+//   produces<std::vector<std::pair<edm::Ptr<pat::Electron>, reco::TransientTrack>>> ("eleTtkMap");
+  produces<std::vector<std::pair<edm::Ptr<pat::Electron>, reco::Track>>> ("eleTtkMap");
 }
 
 
@@ -89,7 +87,8 @@ cmg::AddElectronTransientTrack::produce(edm::Event & iEvent, const edm::EventSet
 {
 
   // unique pointers for the output
-  std::unique_ptr< std::vector<std::pair<edm::Ptr<pat::Electron>, reco::TransientTrack>> > eleTtkMap_ptr(new std::vector<std::pair<edm::Ptr<pat::Electron>, reco::TransientTrack>>);
+//   std::unique_ptr< std::vector<std::pair<edm::Ptr<pat::Electron>, reco::TransientTrack>> > eleTtkMap_ptr(new std::vector<std::pair<edm::Ptr<pat::Electron>, reco::TransientTrack>>);
+  std::unique_ptr< std::vector<std::pair<edm::Ptr<pat::Electron>, reco::Track>> > eleTtkMap_ptr(new std::vector<std::pair<edm::Ptr<pat::Electron>, reco::Track>>);
        
   // Get the transient track builder from the event setup
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", ttrack_builder);
@@ -105,7 +104,8 @@ cmg::AddElectronTransientTrack::produce(edm::Event & iEvent, const edm::EventSet
     edm::Ptr<pat::Electron> ptrEle = electrons->ptrAt(idx);
 
     // fill the map
-    eleTtkMap_ptr -> push_back ( std::pair<edm::Ptr<pat::Electron>, reco::TransientTrack>(ptrEle, ttrack_builder->build(iele->gsfTrack())) );
+//     eleTtkMap_ptr -> push_back ( std::pair<edm::Ptr<pat::Electron>, reco::TransientTrack>(ptrEle, ttrack_builder->build(iele->gsfTrack())) );
+    eleTtkMap_ptr -> push_back ( std::pair<edm::Ptr<pat::Electron>, reco::Track>(ptrEle, ttrack_builder->build(iele->gsfTrack()).track()) );
 
   }
 

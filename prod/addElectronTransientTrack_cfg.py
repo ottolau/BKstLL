@@ -35,5 +35,8 @@ process.prunedOutput = cms.EndPath( process.out )
 
 # limit the number of events to be processed
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( -1 )
+    input = cms.untracked.int32( 100 )
 )
+
+## logger
+process.MessageLogger.cerr.FwkReport.reportEvery = 1

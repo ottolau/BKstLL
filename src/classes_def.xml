@@ -2,4 +2,18 @@
 
  <class name="KinematicVertexFitter"/>
  
+<!-- 
+ <class name="std::pair<edm::Ptr<pat::Electron>,reco::TransientTrack>"/>
+ <class name="edm::Wrapper<std::pair<edm::Ptr<pat::Electron>,reco::TransientTrack> >"/>
+
+ <class name="std::vector<std::pair<edm::Ptr<pat::Electron>,reco::TransientTrack> >"/>
+ <class name="edm::Wrapper<std::vector<std::pair<edm::Ptr<pat::Electron>,reco::TransientTrack> > >"/> 
+ -->
+
+ <class name="std::pair<edm::Ptr<pat::Electron>,reco::Track>"/>
+ <class name="edm::Wrapper<std::pair<edm::Ptr<pat::Electron>,reco::Track> >"/>
+
+ <class name="std::vector<std::pair<edm::Ptr<pat::Electron>,reco::Track> >"/>
+ <class name="edm::Wrapper<std::vector<std::pair<edm::Ptr<pat::Electron>,reco::Track> > >"/> 
+
 </lcgdict>
