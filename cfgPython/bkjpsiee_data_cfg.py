@@ -17,23 +17,23 @@ from PhysicsTools.Heppy.analyzers.gen.GeneratorAnalyzer  import GeneratorAnalyze
 from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer  import LHEWeightAnalyzer
         
 # WTau3Mu analysers
-from CMGTools.BKstLL.analyzers.BKJPsiAnalyzer            import BKJPsiAnalyzer    
+from CMGTools.BKstLL.analyzers.BKJPsiEEAnalyzer          import BKJPsiEEAnalyzer    
 from CMGTools.BKstLL.analyzers.BKJPsiTreeProducer        import BKJPsiTreeProducer
 
 # import samples, signal
-from CMGTools.BKstLL.samples.bph_parked_data_2018        import BPHParking6_2018A
+from CMGTools.BKstLL.samples.bph_parked_data_2018        import BPHParking6_AOD_2018A
 
 ###################################################
 ###                   OPTIONS                   ###
 ###################################################
 # Get all heppy options; set via "-o production" or "-o production=True"
 # production = True run on batch, production = False (or unset) run locally
-production         = getHeppyOption('production' , False)
+production         = getHeppyOption('production' , False )
 pick_events        = getHeppyOption('pick_events', False)
 ###################################################
 ###               HANDLE SAMPLES                ###
 ###################################################
-samples = [BPHParking6_2018A]
+samples = [BPHParking6_AOD_2018A]
 
 for sample in samples:
     sample.triggers  = ['HLT_DoubleMu3_Trk_Tau3mu_v%d' %i for i in range(3, 12)]
@@ -75,8 +75,8 @@ pileUpAna = cfg.Analyzer(
 )
 
 mainAna = cfg.Analyzer(
-    BKJPsiAnalyzer,
-    name = 'BKJPsiAnalyzer',
+    BKJPsiEEAnalyzer,
+    name = 'BKJPsiEEAnalyzer',
 )
 
 treeProducer = cfg.Analyzer(
@@ -101,7 +101,7 @@ sequence = cfg.Sequence([
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    comp                 = BPHParking6_2018A
+    comp                 = BPHParking6_AOD_2018A
     selectedComponents   = [comp]
     comp.splitFactor     = 1
     comp.files           = comp.files[:1]

@@ -1,0 +1,4 @@
+<library name="CMGToolsBKstLLPlugins" file="*.cc">
+  <use name="CMGTools/BKstLL"/>
+  <flags   EDM_PLUGIN="1"/>
+</library>

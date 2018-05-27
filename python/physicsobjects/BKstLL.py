@@ -6,6 +6,7 @@ from itertools import combinations, product
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
 from ROOT import TVector3, Math
 
+from ROOT import KinematicVertexFitter as VertexFitter
 
 class BKstLL(object):
 
