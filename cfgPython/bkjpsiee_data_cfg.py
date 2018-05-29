@@ -104,7 +104,8 @@ if not production:
     comp                 = BPHParking6_AOD_2018A
     selectedComponents   = [comp]
     comp.splitFactor     = 1
-    comp.files           = comp.files[:1]
+#     comp.files           = comp.files[:1]
+    comp.files           = ['file:/afs/cern.ch/work/m/manzoni/hbb/CMSSW_10_1_4/src/CMGTools/BKstLL/prod/output_v2.root']
 #     comp.fineSplitFactor = 4
 
 preprocessor = None

@@ -46,6 +46,7 @@ class KinematicVertexFitter {
       return transientTrack;
     }
 
+    // charged candidates and packed candidates
     RefCountedKinematicTree Fit(const std::vector<reco::RecoChargedCandidate> & charged, const std::vector<pat::PackedCandidate> & packed){
 
       KinematicParticleFactoryFromTransientTrack pFactory;  
@@ -72,6 +73,34 @@ class KinematicVertexFitter {
         
     }
 
+    // pat::Electrons and packed candidates
+    RefCountedKinematicTree Fit(std::vector<reco::Track> & eletracks, const std::vector<pat::PackedCandidate> & packed){
+
+      KinematicParticleFactoryFromTransientTrack pFactory;  
+      std::vector<RefCountedKinematicParticle> XParticles;
+
+      // loop over the RecoChargedCandidates
+      for (std::vector<reco::Track>::const_iterator iepair = eletracks.begin(); iepair != eletracks.end(); ++iepair){
+        float pmass  = 0.0005109989461;
+        float pmasse = 1.e-6 * pmass;
+        XParticles.push_back(pFactory.particle(getTransientTrack( *iepair ), pmass, chi, ndf, pmasse));
+      }
+
+      // loop over the PackedCandidates, notice the different way to access the track
+      for (std::vector<pat::PackedCandidate>::const_iterator ipc = packed.begin(); ipc != packed.end(); ++ipc){
+        float pmass  = ipc->mass();
+        float pmasse = 1.e-6 * pmass;
+        XParticles.push_back(pFactory.particle(getTransientTrack( *(ipc->bestTrack()) ), pmass, chi, ndf, pmasse));
+      }
+
+      KinematicConstrainedVertexFitter kvFitter;
+      RefCountedKinematicTree KinVtx = kvFitter.fit(XParticles); 
+      
+      return KinVtx;
+        
+    }
+//*/    
+
   private:
     OAEParametrizedMagneticField *paramField = new OAEParametrizedMagneticField("3_8T");
     // Insignificant mass sigma to avoid singularities in the covariance matrix.
@@ -80,66 +109,4 @@ class KinematicVertexFitter {
     float ndf        = 0.;
 
 };
-
-// 
-// class KinematicVertexFitterGSF {
-// 
-//   public:
-//     KinematicVertexFitterGSF() {};
-//     virtual ~KinematicVertexFitterGSF() {};
-// 
-// 
-// 
-// 	edm::ESHandle<TransientTrackBuilder> ttrack_builder;
-// 	iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", ttrack_builder);
-// 
-// 
-// 
-// 			std::vector<reco::TransientTrack> trks{
-// 				ttrack_builder->build(trk), ttrack_builder->build(ele->gsfTrack())};
-// 
-// 
-// 
-//     reco::TransientTrack getGsfTransientTrack(const reco::GsfTrack& track) {    
-//       reco::GsfTransientTrack gsfTransientTrack(track, paramField);
-//       reco::TransientTrack    transientTrack(gsfTransientTrack.candidatePtr(), paramField)
-//       return transientTrack;
-//     }
-// 
-//     RefCountedKinematicTree Fit(const std::vector<pat::Electron> & electrons, const std::vector<pat::PackedCandidate> & packed){
-// 
-//       KinematicParticleFactoryFromTransientTrack pFactory;  
-//       std::vector<RefCountedKinematicParticle> XParticles;
-// 
-//       // loop over the Electrons
-//       for (std::vector<pat::Electron>::const_iterator iele = electrons.begin(); iele != electrons.end(); ++iele){
-//         float pmass  = iele->mass();
-//         float pmasse = 1.e-6 * pmass;
-//         XParticles.push_back(pFactory.particle(getGsfTransientTrack( *(iele->gsfTrack()) ), pmass, chi, ndf, pmasse));
-//       }
-// 
-//       // loop over the PackedCandidates, notice the different way to access the track
-//       for (std::vector<pat::PackedCandidate>::const_iterator ipc = packed.begin(); ipc != packed.end(); ++ipc){
-//         float pmass  = ipc->mass();
-//         float pmasse = 1.e-6 * pmass;
-//         XParticles.push_back(pFactory.particle(getTransientTrack( *(ipc->bestTrack()) ), pmass, chi, ndf, pmasse));
-//       }
-// 
-//       KinematicConstrainedVertexFitter kvFitter;
-//       RefCountedKinematicTree KinVtx = kvFitter.fit(XParticles); 
-//       
-//       return KinVtx;
-//         
-//     }
-// 
-//   private:
-//     OAEParametrizedMagneticField *paramField = new OAEParametrizedMagneticField("3_8T");
-//     // Insignificant mass sigma to avoid singularities in the covariance matrix.
-//     // initial chi2 and ndf before kinematic fits. The chi2 of the reconstruction is not considered 
-//     float chi        = 0.;
-//     float ndf        = 0.;
-// 
-// };
-// 
-
 
