@@ -191,7 +191,7 @@ class BKJPsiEEAnalyzer(Analyzer):
         if not len(cands): return False
         self.counters.counter('BKJPsiEEAnalyzer').inc('good diele vtx')
 
-        cands = [cand for cand in cands if cand.b().mass()<6]
+        cands = [cand for cand in cands if cand.b().mass()>4 and cand.b().mass()<6]
         if not len(cands): return False
         self.counters.counter('BKJPsiEEAnalyzer').inc('B(KLL) mass < 6')
 

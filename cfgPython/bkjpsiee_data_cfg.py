@@ -21,23 +21,24 @@ from CMGTools.BKstLL.analyzers.BKJPsiEEAnalyzer          import BKJPsiEEAnalyzer
 from CMGTools.BKstLL.analyzers.BKJPsiTreeProducer        import BKJPsiTreeProducer
 
 # import samples, signal
-from CMGTools.BKstLL.samples.bph_parked_data_2018        import BPHParking6_AOD_2018A
+from CMGTools.BKstLL.samples.bph_parked_data_2018        import bph_parking_2018A, BPHParking6_AOD_2018A, bph_parking_2018A_skimmed, BPHParking3_2018A_skimmed
 
 ###################################################
 ###                   OPTIONS                   ###
 ###################################################
 # Get all heppy options; set via "-o production" or "-o production=True"
 # production = True run on batch, production = False (or unset) run locally
-production         = getHeppyOption('production' , False )
+production         = getHeppyOption('production' , True )
 pick_events        = getHeppyOption('pick_events', False)
 ###################################################
 ###               HANDLE SAMPLES                ###
 ###################################################
-samples = [BPHParking6_AOD_2018A]
+# samples = [BPHParking6_AOD_2018A]
+samples = bph_parking_2018A_skimmed
 
 for sample in samples:
     sample.triggers  = ['HLT_DoubleMu3_Trk_Tau3mu_v%d' %i for i in range(3, 12)]
-    sample.splitFactor = splitFactor(sample, 2e4)
+    sample.splitFactor = splitFactor(sample, 2e5)
 
 selectedComponents = samples
 
@@ -101,11 +102,11 @@ sequence = cfg.Sequence([
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    comp                 = BPHParking6_AOD_2018A
+    comp                 = BPHParking3_2018A_skimmed
     selectedComponents   = [comp]
     comp.splitFactor     = 1
-#     comp.files           = comp.files[:1]
-    comp.files           = ['file:/afs/cern.ch/work/m/manzoni/hbb/CMSSW_10_1_4/src/CMGTools/BKstLL/prod/output_v2.root']
+    comp.files           = comp.files[:1]
+#     comp.files           = ['file:/afs/cern.ch/work/m/manzoni/hbb/CMSSW_10_1_4/src/CMGTools/BKstLL/prod/output_v2.root']
 #     comp.fineSplitFactor = 4
 
 preprocessor = None
