@@ -18,7 +18,7 @@ options.parseArguments()
 # - VarParsing options
 
 # use Varparsing object
-events = Events ('output.root')
+events = Events ('output_v2.root')
 
 # create handle outside of loop
 handle_ele  = Handle ("std::vector<pat::Electron>")
@@ -35,6 +35,12 @@ ROOT.gROOT.SetStyle('Plain') # white background
 
 # loop over events
 for ii, event in enumerate(events):
+    if event.eventAuxiliary().run() != 316060:
+         continue
+    if event.eventAuxiliary().luminosityBlock() != 306:
+         continue
+    if event.eventAuxiliary().event() != 291325724:
+         continue
     print ii
     # use getByLabel, just like in cmsRun
     event.getByLabel (label_ele, handle_ele)
