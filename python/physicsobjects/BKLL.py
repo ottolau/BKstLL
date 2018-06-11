@@ -48,7 +48,10 @@ class BKLL(object):
 
     def charge(self):
         return self.k().charge() + self.l0().charge() + self.l1.charge()
-    
+
+    def bs(self):
+        return self.bs_
+            
     def vtx(self):
         return self.vtx_
 
@@ -75,18 +78,19 @@ class BKLL(object):
     def vtxprob(self):
         return ROOT.TMath.Prob(self.vtx().chi2(), int(self.vtx().ndof()))
 
+    
+    def vtxcos(self):
+        perp = ROOT.math.XYZVector(self.b().px(),
+                                   self.b().py(),
+                                   0.)
+        
+        dxybs = ROOT.GlobalPoint(-1*((self.bs().x0() - self.vtx().x()) + (self.vtx().z() - self.bs().z0()) * self.bs().dxdz()), 
+                                 -1*((self.bs().y0() - self.vtx().y()) + (self.vtx().z() - self.bs().z0()) * self.bs().dydz()),
+                                  0)
+        
+        vperp = ROOT.math.XYZVector(dxybs.x(), dxybs.y(), 0.)
+        
+        cos = vperp.Dot(perp)/(vperp.R()*perp.R())
+        
+        return cos
 
-'''
-        # calculate decay length significance w.r.t. the beamspot
-        tauperp = ROOT.math.XYZVector(event.tau3mu.refitTau.px(),
-                                      event.tau3mu.refitTau.py(),
-                                      0.)
-        
-        displacementFromBeamspotTau = ROOT.GlobalPoint(-1*((event.bs.x0() - tauvtx.x()) + (tauvtx.z() - event.bs.z0()) * event.bs.dxdz()), 
-                                                       -1*((event.bs.y0() - tauvtx.y()) + (tauvtx.z() - event.bs.z0()) * event.bs.dydz()),
-                                                        0)
-        
-        vperptau = ROOT.math.XYZVector(displacementFromBeamspotTau.x(), displacementFromBeamspotTau.y(), 0.)
-        
-        event.tau3muRefit.refittedVertex.cos = vperptau.Dot(tauperp)/(vperptau.R()*tauperp.R())
-'''
