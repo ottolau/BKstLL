@@ -4,7 +4,7 @@ from CMGTools.BKstLL.analyzers.L1Seeds import single_muon, di_muon, tri_muon
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
 from itertools import combinations
 
-class BKJPsiTreeProducer(L1PurityTreeProducerBase):
+class BKstJPsiTreeProducer(L1PurityTreeProducerBase):
 
     '''
     '''
@@ -16,12 +16,15 @@ class BKJPsiTreeProducer(L1PurityTreeProducerBase):
         
         self.bookParticle(self.tree, 'l1')
         self.bookParticle(self.tree, 'l2')
+        self.bookParticle(self.tree, 'pi')
+        self.bookParticle(self.tree, 'kst')
         self.bookParticle(self.tree, 'k')
         self.bookParticle(self.tree, 'b')
         self.bookParticle(self.tree, 'll')
 
         self.var(self.tree, 'llcone')
         self.var(self.tree, 'bcone')
+        self.var(self.tree, 'kstcone')
         
         self.var(self.tree, 'vtx_ls')
         self.var(self.tree, 'vtx_prob')
@@ -41,14 +44,29 @@ class BKJPsiTreeProducer(L1PurityTreeProducerBase):
 
         self.fillEvent(self.tree, event)
 
-        self.fillParticle(self.tree, 'l1', event.myB.l0())
-        self.fillParticle(self.tree, 'l2', event.myB.l1())
-        self.fillParticle(self.tree, 'k'  , event.myB.k ())
-        self.fillParticle(self.tree, 'b'  , event.myB.b() )
-        self.fillParticle(self.tree, 'll' , event.myB.ll())
+#         if abs(event.myB.l0().mass() - 0.000511)> 0.0001:
+#             print 'problem with electron mass'
+#             import pdb ; pdb.set_trace()
+# 
+#         if abs(event.myB.pi().mass() - 0.13957061) > 0.1:
+#             print 'problem with pi mass'
+#             import pdb ; pdb.set_trace()
+#         
+#         if abs(event.myB.k().mass() - 0.493677) > 0.1:
+#             print 'problem with k mass'
+#             import pdb ; pdb.set_trace()
 
-        self.fill(self.tree, 'llcone', event.myB.llcone())
-        self.fill(self.tree, 'bcone' , event.myB.bcone())
+        self.fillParticle(self.tree, 'l1' , event.myB.l0 ())
+        self.fillParticle(self.tree, 'l2' , event.myB.l1 ())
+        self.fillParticle(self.tree, 'pi' , event.myB.pi ())
+        self.fillParticle(self.tree, 'kst', event.myB.kst())
+        self.fillParticle(self.tree, 'k'  , event.myB.k  ())
+        self.fillParticle(self.tree, 'b'  , event.myB.b  ())
+        self.fillParticle(self.tree, 'll' , event.myB.ll ())
+
+        self.fill(self.tree, 'llcone' , event.myB.llcone ())
+        self.fill(self.tree, 'bcone'  , event.myB.bcone  ())
+        self.fill(self.tree, 'kstcone', event.myB.kstcone())
 
         self.fill(self.tree, 'vtx_ls'  , event.myB.ls2d()   )
         self.fill(self.tree, 'vtx_prob', event.myB.vtxprob())

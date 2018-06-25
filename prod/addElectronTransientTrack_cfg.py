@@ -12,15 +12,15 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 
 
 ############ DATA ##############
-# process.GlobalTag.globaltag = cms.string( "101X_dataRun2_Prompt_v9" )
+process.GlobalTag.globaltag = cms.string( "101X_dataRun2_Prompt_v9" )
 ############ THOMAS' MC ##############
-process.GlobalTag.globaltag = cms.string( "94X_mc2017_realistic_v12" )  
+# process.GlobalTag.globaltag = cms.string( "94X_mc2017_realistic_v12" )  
   
 # Configure the object that reads the input file
 process.source = cms.Source('PoolSource', 
     fileNames = cms.untracked.vstring(
-#         'root://cms-xrd-global.cern.ch//store/data/Run2018A/ParkingBPH1/MINIAOD/14May2018-v1/30000/C870BB22-1D5A-E811-AE46-0025905D1D7A.root',
-        'root://cms-xrd-global.cern.ch//store/user/tstreble/Bu_KJPsi_ee_Pythia/BuToKJPsiee_Pythia_MINIAODSIM_18_06_05/180605_092537/0000/Bu_KJPsi_ee_MINIAODSIM_8.root',
+        'root://cms-xrd-global.cern.ch//store/data/Run2018A/ParkingBPH1/MINIAOD/14May2018-v1/30000/C870BB22-1D5A-E811-AE46-0025905D1D7A.root',
+#         'root://cms-xrd-global.cern.ch//store/user/tstreble/Bu_KJPsi_ee_Pythia/BuToKJPsiee_Pythia_MINIAODSIM_18_06_05/180605_092537/0000/Bu_KJPsi_ee_MINIAODSIM_8.root',
     ),
 )
 

@@ -99,6 +99,28 @@ class KinematicVertexFitter {
       return KinVtx;
         
     }
+
+    // packed candidates
+    RefCountedKinematicTree Fit(const std::vector<pat::PackedCandidate> & packed){
+
+      KinematicParticleFactoryFromTransientTrack pFactory;  
+      std::vector<RefCountedKinematicParticle> XParticles;
+
+      // loop over the PackedCandidates, notice the different way to access the track
+      for (std::vector<pat::PackedCandidate>::const_iterator ipc = packed.begin(); ipc != packed.end(); ++ipc){
+        float pmass  = ipc->mass();
+        float pmasse = 1.e-6 * pmass;
+        XParticles.push_back(pFactory.particle(getTransientTrack( *(ipc->bestTrack()) ), pmass, chi, ndf, pmasse));
+      }
+
+      KinematicConstrainedVertexFitter kvFitter;
+      RefCountedKinematicTree KinVtx = kvFitter.fit(XParticles); 
+      
+      return KinVtx;
+        
+    }
+
+
 //*/    
 
   private:
