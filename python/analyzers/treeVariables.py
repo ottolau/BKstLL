@@ -20,7 +20,7 @@ def default():
 event_vars = [
     Variable('run', type=int),
     Variable('lumi', type=int),
-    Variable('event', lambda ev : ev.eventId, type=int),
+    Variable('event', lambda ev : ev.eventId if hasattr(ev, 'eventId') else 0, type=int),
     Variable('bx', lambda ev : (ev.input.eventAuxiliary().bunchCrossing() * ev.input.eventAuxiliary().isRealData()), type=int),
     Variable('orbit_number', lambda ev : (ev.input.eventAuxiliary().orbitNumber() * ev.input.eventAuxiliary().isRealData()), type=int),
     Variable('is_data', lambda ev: ev.input.eventAuxiliary().isRealData(), type=int),
@@ -38,7 +38,7 @@ particle_vars = [
     Variable('eta'   , lambda p: p.eta()),
     Variable('phi'   , lambda p: p.phi()),
     Variable('charge', lambda p: p.charge() if hasattr(p, 'charge') else 0), # charge may be non-integer for gen particles
-    Variable('mass'  , lambda p: p.mass()),
+    Variable('mass'  , lambda p: p.mass() if hasattr(p, 'mass') else 0),
 ]
 
 # stage-2 L1 object

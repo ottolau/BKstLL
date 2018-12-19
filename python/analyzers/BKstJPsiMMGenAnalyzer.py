@@ -8,14 +8,21 @@ from PhysicsTools.HeppyCore.utils.deltar             import deltaR, deltaR2, bes
 from PhysicsTools.Heppy.physicsobjects.Muon          import Muon
 from PhysicsTools.Heppy.physicsobjects.Electron      import Electron
 from PhysicsTools.Heppy.physicsobjects.PhysicsObject import PhysicsObject
+from CMGTools.BKstLL.analyzers.utils import displacement2D, displacement3D, makeRecoVertex # utility functions
+from CMGTools.BKstLL.physicsobjects.BKstLL import BKstLL
 
 from pdb import set_trace
 
-class BKstLLGenAnalyzer(Analyzer):
+##########################################################################################
+# load custom library to ROOT. This contains the kinematic vertex fitter class
+ROOT.gSystem.Load('libCMGToolsBKstLL')
+from ROOT import KinematicVertexFitter as VertexFitter
+
+class BKstJPsiMMGenAnalyzer(Analyzer):
     '''
     '''
     def declareHandles(self):
-        super(BKstLLGenAnalyzer, self).declareHandles()
+        super(BKstJPsiMMGenAnalyzer, self).declareHandles()
 
         self.handles['L1muons'] = AutoHandle(
             ('gmtStage2Digis', 'Muon'),
@@ -52,18 +59,33 @@ class BKstLLGenAnalyzer(Analyzer):
             'std::vector<pat::PackedGenParticle>'
         )
 
+        self.handles['beamspot'  ] = AutoHandle(
+            ('offlineBeamSpot'              , '', 'RECO'),
+            'reco::BeamSpot'
+        )
+
 
     def beginLoop(self, setup):
-        super(BKstLLGenAnalyzer, self).beginLoop(setup)
-        self.counters.addCounter('BKstLLGenAnalyzer')
-        count = self.counters.counter('BKstLLGenAnalyzer')
+        super(BKstJPsiMMGenAnalyzer, self).beginLoop(setup)
+        self.counters.addCounter('BKstJPsiMMGenAnalyzer')
+        count = self.counters.counter('BKstJPsiMMGenAnalyzer')
         count.register('all events')
-        count.register('has a good gen B0->K*LL')
+        count.register('has a good gen B0->KstJPsiMM')
+
+        # stuff I need to instantiate only once
+        self.vtxfit = VertexFitter()
+        # create a std::vector<reco::RecoChargedCandidate> to be passed to the fitter 
+        self.tofit_cc = ROOT.std.vector('reco::RecoChargedCandidate')()
+        # create a std::vector<pat::PackedCandidate> to be passed to the fitter 
+        self.tofit_pc = ROOT.std.vector('pat::PackedCandidate')()
 
     def process(self, event):
         self.readCollections(event.input)
 
-        self.counters.counter('BKstLLGenAnalyzer').inc('all events')
+        self.counters.counter('BKstJPsiMMGenAnalyzer').inc('all events')
+
+        # vertex stuff
+        event.beamspot    = self.handles['beamspot'].product()
 
         # get the tracks
         allpf      = map(PhysicsObject, self.handles['pfcands'   ].product())
@@ -140,8 +162,48 @@ class BKstLLGenAnalyzer(Analyzer):
                 event.kstll.lp = lp
                 event.kstll.lm = lm
                 event.kstll.pi = pi
-                event.kstll.k  = k 
+                event.kstll.k = k
                 event.kstll.dr = min([deltaR(event.kstll, jj) for jj in [lp, lm, pi, k]])
+
+
+                # if all tracks are reconstructed
+                if hasattr(event.kstll.lp, 'reco') and hasattr(event.kstll.lm, 'reco') and hasattr(event.kstll.pi, 'reco') and hasattr(event.kstll.k, 'reco') and event.kstll.pi.reco.bestTrack() and event.kstll.k.reco.bestTrack():
+
+                    # vertex fit
+                    # clear the vectors
+                    self.tofit_cc.clear()
+                    self.tofit_pc.clear()
+                    dimu = (event.kstll.lp.reco, event.kstll.lm.reco)
+                    # create a RecoChargedCandidate for each reconstructed lepton and flush it into the vector
+                    for il in dimu:
+                        # if the reco particle is a displaced thing, it does not have the p4() method, so let's build it 
+                        myp4 = ROOT.Math.LorentzVector('<ROOT::Math::PxPyPzE4D<double> >')(il.px(), il.py(), il.pz(), math.sqrt(il.mass()**2 + il.px()**2 + il.py()**2 + il.pz()**2))
+                        ic = ROOT.reco.RecoChargedCandidate() # instantiate a dummy RecoChargedCandidate
+                        ic.setCharge(il.charge())             # assign the correct charge
+                        ic.setP4(myp4)                        # assign the correct p4                
+                        ic.setTrack(il.track())               # set the correct TrackRef
+                        if ic.track().isNonnull():            # check that the track is valid
+                            self.tofit_cc.push_back(ic)
+                    #set_trace()
+                    m_k = 0.493677
+                    # push the track into the vector
+                    self.tofit_pc.push_back(event.kstll.pi.reco.physObj)
+                    self.tofit_pc.push_back(event.kstll.k.reco.physObj)
+
+                    # fit it!
+                    try:
+                        svtree = self.vtxfit.Fit(self.tofit_cc, self.tofit_pc) # actual vertex fitting
+                    except:
+                        set_trace()
+                    # check that the vertex is good
+                    if not svtree.get().isEmpty() and svtree.get().isValid():
+                        svtree.movePointerToTheTop()
+                        sv = svtree.currentDecayVertex().get()
+                        recoSv = makeRecoVertex(sv, kinVtxTrkSize=4) # need to do some gymastics
+                        event.kstll.sv = recoSv
+                        event.myB = BKstLL(dimu[0], dimu[1], event.kstll.pi.reco, event.kstll.k.reco, recoSv, event.beamspot)
+
+
                 break # yeah, only one at a time, mate!
         
 #         if hasattr(event.kstll.lp, 'reco') and hasattr(event.kstll.lm, 'reco'):
@@ -150,7 +212,7 @@ class BKstLLGenAnalyzer(Analyzer):
             
         if not hasattr(event, 'kstll'):
             return False
-        self.counters.counter('BKstLLGenAnalyzer').inc('has a good gen B0->K*LL')
+        self.counters.counter('BKstJPsiMMGenAnalyzer').inc('has a good gen B0->KstJPsiMM')
         
         toclean = None
         
@@ -168,7 +230,7 @@ class BKstLLGenAnalyzer(Analyzer):
 #             return False
 #             import pdb ; pdb.set_trace()
 # 
-#         self.counters.counter('BKstLLGenAnalyzer').inc('no fuck ups')
+#         self.counters.counter('BKstJPsiMMGenAnalyzer').inc('no fuck ups')
         
         
 #         elif abs(event.kstll.mother(0).pdgId())>500 and abs(event.kstll.mother(0).pdgId())<600:
@@ -229,14 +291,16 @@ class BKstLLGenAnalyzer(Analyzer):
         if len(lps) == len(lms) == len(pis) == len(ks) == 1:
             return True, lps[0], lms[0], pis[0], ks[0]
         else:
-            return False, None, None, None, None        
-        
+            return False, None, None, None, None  
+
+
+
     @staticmethod
     def isAncestor(a, p):
         if a == p :
             return True
         for i in xrange(0,p.numberOfMothers()):
-            if BKstLLGenAnalyzer.isAncestor(a,p.mother(i)):
+            if BKstJPsiMMGenAnalyzer.isAncestor(a,p.mother(i)):
                 return True
         return False
 

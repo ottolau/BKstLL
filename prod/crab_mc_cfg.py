@@ -23,10 +23,10 @@ config.Data.splitting          = 'Automatic'
 
 # JSON files:
 # /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/
-config.Data.publication        = True
+config.Data.publication        = False
 config.Data.outputDatasetTag   = 'skimParkingBPHToEE'
 
-config.Site.storageSite        = 'T2_CH_CERN'
+config.Site.storageSite        = 'T3_US_FNALLPC'
 # config.Site.blacklist          = ['T1_US_FNAL']
 # config.Site.whitelist          = ['T2_CH_CERN']
 
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # We want to put all the CRAB project directories from the tasks we submit here into one common directory.
     # That's why we need to set this parameter (here or above in the configuration file, it does not matter, we will not overwrite it).
     config.General.workArea   = 'crab_bph_parking_mc_' + tag
-    config.Data.outLFNDirBase = '/store/group/phys_tau/BKstLL/' + tag 
+    config.Data.outLFNDirBase = '/store/user/klau/' + tag 
     
     def submit(config):
         try:
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     datasets = OrderedDict()
 
-    datasets['BKPsiEE'] = '/Bu_KJPsi_ee_Pythia/tstreble-BuToKJPsiee_Pythia_MINIAODSIM_18_06_05-393c5b9eb90ffa47a3c9a0f5562ec979/USER'
+    datasets['BKstPsiEE'] = '/Bd_KstJPsi_ee_Pythia_GEN-SIM_18_07_01/tstreble-BdToKstJPsiee_MINIAODSIM_18_07_04-393c5b9eb90ffa47a3c9a0f5562ec979/USER'
 
     for k, v in datasets.iteritems():
         config.General.requestName = k

@@ -21,8 +21,10 @@ from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer     import LHEWeightAnal
 from CMGTools.H2TauTau.proto.analyzers.JetAnalyzer          import JetAnalyzer
 
 # WTau3Mu analysers
-from CMGTools.BKstLL.analyzers.BKstLLGenAnalyzer            import BKstLLGenAnalyzer    
-from CMGTools.BKstLL.analyzers.BKstLLGenTreeProducer        import BKstLLGenTreeProducer
+from CMGTools.BKstLL.analyzers.BsJPsiPhiGenAnalyzer_Skim_AOD        import BsJPsiPhiGenAnalyzer_Skim_AOD
+from CMGTools.BKstLL.analyzers.BsJPsiPhiGenTreeProducer_Skim_AOD        import BsJPsiPhiGenTreeProducer_Skim_AOD
+
+import numpy as np
 
 # import samples, signal
 #from CMGTools.BKstLL.samples.signal import BdKstMM
@@ -42,13 +44,36 @@ pick_events        = getHeppyOption('pick_events', False)
 ###               HANDLE SAMPLES                ###
 ###################################################
 
-BdKstMM = cfg.MCComponent(
-    'BdKstMM',
-    files = '/store/mc/RunIISummer16MiniAODv2/BdToKstarMuMu_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/288EFE7A-60B9-E611-B1DB-0CC47A1DF7F2.root', 
+### Dataset: /BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISummer17DRStdmix-NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/AODSIM
+
+inputdata = np.loadtxt('BsToJpsiPhi_AODSIM_filename.dat', dtype='str')
+inputdata = ['root://cms-xrd-global.cern.ch/'+st for st in inputdata]
+
+BsJPsiMMPhi = cfg.MCComponent(
+    'BsJPsiMMPhi',
+    #files = '/store/mc/RunIISummer16MiniAODv2/BdToKstarMuMu_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/288EFE7A-60B9-E611-B1DB-0CC47A1DF7F2.root', 
+    files = ['file:46BFC0D9-D3AC-E711-850E-008CFAC913F8.root',],
+    #files = ['file:46BFC0D9-D3AC-E711-850E-008CFAC913F8.root','file:A6221481-FDAB-E711-B8A0-02163E01765E.root',],
+
+#    files = ['root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/46BFC0D9-D3AC-E711-850E-008CFAC913F8.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/80E3CBD8-F2AC-E711-9191-008CFAC93F0C.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/629DACDD-E0AB-E711-8792-02163E016491.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/8619CBC2-FBAB-E711-8754-02163E01643C.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/A6221481-FDAB-E711-B8A0-02163E01765E.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/569DA21D-02AC-E711-9F91-FA163E3A1163.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/44E127E3-02AC-E711-8EE2-02163E014FDA.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/C6401406-03AC-E711-9CEA-FA163E5DA5D0.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/DAE60915-EFAB-E711-B27C-FA163E74C5BB.root',
+#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/DC42DBA8-08AC-E711-A101-FA163E3111A9.root',
+#    ]
+    #files = inputdata
+
     # a list of local or xrootd files can be specified by hand.
     )
 
-samples = [BdKstMM]
+multi_thread = True
+
+samples = [BsJPsiMMPhi]
 
 for sample in samples:
     sample.triggers  = ['HLT_DoubleMu3_Trk_Tau3mu_v%d' %i for i in range(3, 12)]
@@ -119,14 +144,14 @@ jetAna = cfg.Analyzer(
 )
 
 mainAna = cfg.Analyzer(
-    BKstLLGenAnalyzer,
-    name = 'BKstLLGenAnalyzer',
-    flavour = 13,
+    BsJPsiPhiGenAnalyzer_Skim_AOD,
+    name = 'BsJPsiPhiGenAnalyzer_Skim_AOD',
+    flavour = 11,
 )
 
 treeProducer = cfg.Analyzer(
-    BKstLLGenTreeProducer,
-    name = 'BKstLLGenTreeProducer',
+    BsJPsiPhiGenTreeProducer_Skim_AOD,
+    name = 'BsJPsiPhiGenTreeProducer_Skim_AOD',
 )
 
 ###################################################
@@ -134,11 +159,11 @@ treeProducer = cfg.Analyzer(
 ###################################################
 sequence = cfg.Sequence([
 #     eventSelector,
-    jsonAna,
-    skimAna,
-    genAna,
-    vertexAna,
-    pileUpAna,
+#    jsonAna,
+#    skimAna,
+#    genAna,
+#    vertexAna,
+#    pileUpAna,
     mainAna,
 #     jetAna,
     treeProducer,
@@ -148,14 +173,18 @@ sequence = cfg.Sequence([
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    comp                 = BdKstMM
+    comp                 = BsJPsiMMPhi
     selectedComponents   = [comp]
-    comp.splitFactor     = 1
+    if multi_thread:
+        #comp.splitFactor = len(comp.files)
+        comp.splitFactor = 8
+    else:
+        comp.splitFactor     = 1
     comp.fineSplitFactor = 1
     #comp.files           = comp.files[:3]
-    comp.files           = [
-         'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv2/BdToKstarMuMu_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/001CD385-A2B9-E611-8F02-FA163EC1154A.root',
-     ]
+#    comp.files           = [
+#         'root://cms-xrd-global.cern.ch//store/mc/RunIISummer16MiniAODv2/BdToKstarMuMu_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/001CD385-A2B9-E611-8F02-FA163EC1154A.root',
+#     ]
 
 #     selectedComponents   = [QCD_Pt_15to30, QCD_Pt_80to120, QCD_Pt_3200toInf]
 #     for comp in selectedComponents:

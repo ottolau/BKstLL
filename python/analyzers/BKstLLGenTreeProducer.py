@@ -15,7 +15,7 @@ class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
         self.bookEvent(self.tree)
 
         # gen pt hat
-        self.var(self.tree, 'qscale')
+        #self.var(self.tree, 'qscale')
         
         # gen tagging muon
         self.bookGenParticle(self.tree, 'tag_mu')
@@ -386,7 +386,7 @@ class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
             return False
 
         self.fillEvent(self.tree, event)
-        self.fill(self.tree, 'qscale', event.qscale)
+        #self.fill(self.tree, 'qscale', event.qscale)
         
         self.fill(self.tree, 'nbmesons', len(event.gen_bmesons))
 
@@ -399,9 +399,9 @@ class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
         self.fillGenParticle(self.tree, 'bd', event.kstll)
         self.fill(self.tree, 'bd_dr', event.kstll.dr)
 
-        for jet in event.jets:
-            if deltaR(event.kstll, jet) < 0.4:
-                self.fillJet(self.tree, 'bd_jet', jet, fill_extra=True)
+        #for jet in event.jets:
+        #    if deltaR(event.kstll, jet) < 0.4:
+        #        self.fillJet(self.tree, 'bd_jet', jet, fill_extra=True)
 
         self.fillGenParticle(self.tree, 'bd_lp', event.kstll.lp)
                 
@@ -419,9 +419,9 @@ class BKstLLGenTreeProducer(L1PurityTreeProducerBase):
 
         for i, ib in enumerate(event.clean_gen_bmesons[:3]):
             self.fillGenParticle(self.tree, 'b%d' %(i+1), ib)
-            for jet in event.jets:
-                if deltaR(ib, jet) < 0.4:
-                    self.fillJet(self.tree, 'b%d_jet' %(i+1), jet, fill_extra=True)
+            #for jet in event.jets:
+                #if deltaR(ib, jet) < 0.4:
+                    #self.fillJet(self.tree, 'b%d_jet' %(i+1), jet, fill_extra=True)
 
         if len(event.clean_gen_bmesons)>0:
             self.fill(self.tree, 'dr_btag_bprobe'   , deltaR  (event.clean_gen_bmesons[0], event.kstll)             )

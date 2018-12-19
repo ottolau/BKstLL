@@ -34,6 +34,8 @@
 #include "RecoVertex/VertexTools/interface/VertexDistance3D.h"
 #include "RecoVertex/VertexTools/interface/VertexDistanceXY.h"
 
+#include "DataFormats/MuonReco/interface/MuonSelectors.h"
+
 // FIXME! this is horrible, but it allows to handle different kinds of C++ objects at the same time
 class KinematicVertexFitter {
 
@@ -44,6 +46,18 @@ class KinematicVertexFitter {
     reco::TransientTrack getTransientTrack(const reco::Track& track) {    
       reco::TransientTrack transientTrack(track, paramField);
       return transientTrack;
+    }
+
+    bool checkIsLooseMuon(const reco::Muon & recoMu) {
+      return muon::isLooseMuon(recoMu);
+    }
+  
+    bool checkIsMediumMuon(const reco::Muon & recoMu) {
+      return muon::isMediumMuon(recoMu);
+    }
+
+    bool checkIsTightMuon(const reco::Muon & recoMu, const reco::Vertex & vtx) {
+      return muon::isTightMuon(recoMu, vtx);
     }
 
     // charged candidates and packed candidates
@@ -64,6 +78,33 @@ class KinematicVertexFitter {
         float pmass  = ipc->mass();
         float pmasse = 1.e-6 * pmass;
         XParticles.push_back(pFactory.particle(getTransientTrack( *(ipc->bestTrack()) ), pmass, chi, ndf, pmasse));
+      }
+
+      KinematicConstrainedVertexFitter kvFitter;
+      RefCountedKinematicTree KinVtx = kvFitter.fit(XParticles); 
+      
+      return KinVtx;
+        
+    }
+
+    // charged candidates and tracks
+    RefCountedKinematicTree Fit(const std::vector<reco::RecoChargedCandidate> & charged, const std::vector<reco::Track> & packed, float trackmass){
+
+      KinematicParticleFactoryFromTransientTrack pFactory;  
+      std::vector<RefCountedKinematicParticle> XParticles;
+
+      // loop over the RecoChargedCandidates
+      for (std::vector<reco::RecoChargedCandidate>::const_iterator icc = charged.begin(); icc != charged.end(); ++icc){
+        float pmass  = icc->mass();
+        float pmasse = 1.e-6 * pmass;
+        XParticles.push_back(pFactory.particle(getTransientTrack( *(icc->track()) ), pmass, chi, ndf, pmasse));
+      }
+
+      // loop over the Tracks, notice the different way to access the track
+      for (std::vector<reco::Track>::const_iterator ipc = packed.begin(); ipc != packed.end(); ++ipc){
+        float pmass  = trackmass;
+        float pmasse = 1.e-6 * pmass;
+        XParticles.push_back(pFactory.particle(getTransientTrack( *(ipc) ), pmass, chi, ndf, pmasse));
       }
 
       KinematicConstrainedVertexFitter kvFitter;
