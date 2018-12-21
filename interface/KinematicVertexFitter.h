@@ -114,6 +114,33 @@ class KinematicVertexFitter {
         
     }
 
+    // tracks and tracks
+    RefCountedKinematicTree Fit(const std::vector<reco::Track> & charged, const std::vector<reco::Track> & packed, float lepmass, float trackmass1, float trackmass2){
+
+      KinematicParticleFactoryFromTransientTrack pFactory;  
+      std::vector<RefCountedKinematicParticle> XParticles;
+
+      // loop over the RecoChargedCandidates
+      for (std::vector<reco::Track>::const_iterator icc = charged.begin(); icc != charged.end(); ++icc){
+        float pmass  = lepmass;
+        float pmasse = 1.e-6 * pmass;
+        XParticles.push_back(pFactory.particle(getTransientTrack( *(icc) ), pmass, chi, ndf, pmasse));
+      }
+
+      // loop over the Tracks, notice the different way to access the track
+      for (std::vector<reco::Track>::const_iterator ipc = packed.begin(); ipc != packed.end(); ++ipc){
+        float pmass  = ((ipc - packed.begin()) == 0 ) ? trackmass1:trackmass2;
+        float pmasse = 1.e-6 * pmass;
+        XParticles.push_back(pFactory.particle(getTransientTrack( *(ipc) ), pmass, chi, ndf, pmasse));
+      }
+
+      KinematicConstrainedVertexFitter kvFitter;
+      RefCountedKinematicTree KinVtx = kvFitter.fit(XParticles); 
+      
+      return KinVtx;
+        
+    }
+
     // pat::Electrons and packed candidates
     RefCountedKinematicTree Fit(std::vector<reco::Track> & eletracks, const std::vector<pat::PackedCandidate> & packed){
 
