@@ -47,8 +47,8 @@ pick_events        = getHeppyOption('pick_events', False)
 ### Dataset: /BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/RunIISummer17DRStdmix-NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/AODSIM
 ### Dataset: /BsToPhi_ToMuMu_MuFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/RunIIAutumn18DR-PUPoissonAve20_102X_upgrade2018_realistic_v15-v2/AODSIM
 
-inputdata = np.loadtxt('BsToJpsiPhi_AODSIM_filename.dat', dtype='str')
-inputdata = ['root://cms-xrd-global.cern.ch/'+st for st in inputdata]
+#inputdata = np.loadtxt('BsToJpsiPhi_AODSIM_filename.dat', dtype='str')
+#inputdata = ['root://cms-xrd-global.cern.ch/'+st for st in inputdata]
 
 BsJPsiMMPhi = cfg.MCComponent(
     'BsJPsiMMPhi',

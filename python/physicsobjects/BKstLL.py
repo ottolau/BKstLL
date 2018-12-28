@@ -139,9 +139,23 @@ class BKstLL(object):
         self.vtx_   = vtx  # vertex
         self.bs_    = beamspot 
 
-        self.k_ .setMass(m_k_ch)
-        self.pi_.setMass(m_pi_ch)
+        m_ele = 0.0005109989461
+        self.l0p4_ = ROOT.TLorentzVector()
+        self.l1p4_ = ROOT.TLorentzVector()
+        self.l0p4_.SetPtEtaPhiM(l0.pt(), l0.eta(), l0.phi(), m_ele)
+        self.l1p4_.SetPtEtaPhiM(l1.pt(), l1.eta(), l1.phi(), m_ele)
 
+        m_k = 0.493677
+        m_pi = 0.13957018
+        self.kp4_ = ROOT.TLorentzVector()
+        self.pip4_ = ROOT.TLorentzVector()
+        self.kp4_.SetPtEtaPhiM(k.pt(), k.eta(), k.phi(), m_k)
+        self.pip4_.SetPtEtaPhiM(pi.pt(), pi.eta(), pi.phi(), m_pi)
+
+        #self.k_ .setMass(m_k_ch)
+        #self.pi_.setMass(m_pi_ch)
+
+        """
         point = ROOT.reco.Vertex.Point(
             self.bs_.position().x(),
             self.bs_.position().y(),
@@ -153,6 +167,8 @@ class BKstLL(object):
         bsvtx = ROOT.reco.Vertex(point, error, chi2, ndof, 3) # size? say 3? does it matter?
 
         self.bsvtx_ = bsvtx 
+        """
+        self.bsvtx_ = self.bs_
 
     # objects
     def l0(self):
@@ -168,7 +184,7 @@ class BKstLL(object):
         return self.pi_
 
     def p4(self):
-        return self.pi().p4() + self.k().p4() + self.l0().p4() + self.l1().p4() 
+        return self.pip4_ + self.kp4_ + self.l0p4_ + self.l1p4_ 
 
     def mass(self):
         return self.p4().mass()
@@ -202,7 +218,7 @@ class BKstLL(object):
         return 511 if self.k().charge()>0 else -511
 
     def kst(self):
-        return self.pi().p4() + self.k().p4()
+        return self.pip4_ + self.kp4_
 
     def charge(self):
         return self.k().charge() + self.pi().charge() + self.l0().charge() + self.l1.charge()
@@ -214,10 +230,10 @@ class BKstLL(object):
         return self.vtx_
 
     def b(self):
-        return self.l0().p4() + self.l1().p4() + self.k().p4() + self.pi().p4() 
+        return self.l0p4_ + self.l1p4_ + self.kp4_ + self.pip4_ 
    
     def ll(self):
-        return self.l0().p4() + self.l1().p4()
+        return self.l0p4_ + self.l1p4_
 
     def bcone(self):
         return max([deltaR(ii, self.b()) for ii in [self.l0(), self.l1(), self.k(), self.pi()]])
@@ -241,14 +257,18 @@ class BKstLL(object):
 
     
     def vtxcos(self):
-        perp = ROOT.math.XYZVector(self.b().px(),
-                                   self.b().py(),
+        perp = ROOT.math.XYZVector(self.b().Px(),
+                                   self.b().Py(),
                                    0.)
         
-        dxybs = ROOT.GlobalPoint(-1*((self.bs().x0() - self.vtx().x()) + (self.vtx().z() - self.bs().z0()) * self.bs().dxdz()), 
-                                 -1*((self.bs().y0() - self.vtx().y()) + (self.vtx().z() - self.bs().z0()) * self.bs().dydz()),
+        #dxybs = ROOT.GlobalPoint(-1*((self.bs().x0() - self.vtx().x()) + (self.vtx().z() - self.bs().z0()) * self.bs().dxdz()), 
+        #                         -1*((self.bs().y0() - self.vtx().y()) + (self.vtx().z() - self.bs().z0()) * self.bs().dydz()),
+        #                          0)
+ 
+        dxybs = ROOT.GlobalPoint(-1*(self.bs().x() - self.vtx().x()), 
+                                 -1*(self.bs().y() - self.vtx().y()),
                                   0)
-        
+       
         vperp = ROOT.math.XYZVector(dxybs.x(), dxybs.y(), 0.)
         
         cos = vperp.Dot(perp)/(vperp.R()*perp.R())

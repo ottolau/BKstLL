@@ -30,13 +30,19 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         )
 
         self.handles['electrons'] = AutoHandle(
-            'selectedPatElectrons',
-            'std::vector<pat::Electron>'
+            #'selectedPatElectrons',
+            #'std::vector<pat::Electron>'
+            'gedGsfElectrons',
+            'std::vector<reco::GsfElectron>'
+
         )
 
         self.handles['muons'] = AutoHandle(
-            'selectedPatMuons',
-            'std::vector<pat::Muon>'
+            #'selectedPatMuons',
+            #'std::vector<pat::Muon>'
+            'muons',
+            'std::vector<reco::Muon>'
+
         )
 
         self.handles['tracks'] = AutoHandle(
@@ -60,7 +66,9 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
             'reco::BeamSpot'
         )
 
-        self.handles['eletrackMap'] = AutoHandle(('ttk', 'eleTtkMap', 'TTK'), 'std::vector<pair<edm::Ptr<pat::Electron>,reco::Track> >')
+        self.handles['pvs'       ] = AutoHandle('offlinePrimaryVertices', 'std::vector<reco::Vertex>'        )
+
+#        self.handles['eletrackMap'] = AutoHandle(('ttk', 'eleTtkMap', 'TTK'), 'std::vector<pair<edm::Ptr<pat::Electron>,reco::Track> >')
 
     def beginLoop(self, setup):
         super(BKstJPsiEEGenAnalyzer, self).beginLoop(setup)
@@ -81,9 +89,10 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         self.readCollections(event.input)
 
         self.counters.counter('BKstJPsiEEGenAnalyzer').inc('all events')
-
+        
         # vertex stuff
         event.beamspot    = self.handles['beamspot'].product()
+        event.pvs = self.handles['pvs'].product()
 
         # get the tracks
         #tracks = map(PhysicsObject, self.handles['tracks'].product())
@@ -93,12 +102,19 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         event.alltracks = sorted([tt for tt in tracks if tt.charge() != 0], key = lambda x : x.pt(), reverse = True)
 
         # get the offline electrons and muons
-        event.electrons = map(Electron, self.handles['electrons'].product())
-        event.muons     = map(Muon    , self.handles['muons'    ].product())
+        #event.electrons = map(Electron, self.handles['electrons'].product())
+        #event.muons     = map(Muon    , self.handles['muons'    ].product())
 
-        pruned_gen_particles = self.mchandles['prunedGenParticles'].product()
-        packed_gen_particles = self.mchandles['packedGenParticles'].product()
+        event.muons     = self.handles['muons'    ].product()
+        event.electrons = self.handles['electrons'].product()
 
+        pruned_gen_particles = self.mchandles['GenParticles'].product()
+        #packed_gen_particles = self.mchandles['packedGenParticles'].product()
+        packed_gen_particles = [ip for ip in pruned_gen_particles if ip.status()==1]
+
+        all_gen_particles = [ip for ip in pruned_gen_particles] + [ip for ip in packed_gen_particles]
+
+        """
         # get the electron-track map BEFORE selections
         eletrks = self.handles['eletrackMap'].product()
 
@@ -117,9 +133,8 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
             event.electrons[jj].ptr = eletrks[jj].first
             if event.electrons[jj].gsfTrack().pt() != eletrks[jj].second.pt():
                 set_trace()
+        """
 
-
-        all_gen_particles = [ip for ip in pruned_gen_particles] + [ip for ip in packed_gen_particles]
          
         # HOOK RM
         event.pruned_gen_particles = pruned_gen_particles
@@ -135,6 +150,15 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         if len(genmus)>0:
             event.thetagmu = sorted(genmus, key = lambda x : x.pt(), reverse = True)[0]
 
+        #event.pv = ROOT.math.XYZPoint(0.,0.,0.)
+        thetagmuPvDz = 1.e+10
+        for pv in event.pvs:
+            if pv.isFake(): continue # work for only AOD
+            if abs(pv.z() - event.thetagmu.vz()) < thetagmuPvDz:
+                thetagmuPvDz = abs(pv.z() - event.thetagmu.vz())
+                #event.pv.SetXYZ(pv.x(), pv.y(), pv.z()) 
+                event.pv = pv
+
         # match gen ele to offline ele
         geneles = [ii for ii in all_gen_particles if abs(ii.pdgId())==11 and ii.status()==1]
         for iele in geneles:
@@ -145,7 +169,9 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         event.gen_bmesons  = [pp for pp in pruned_gen_particles if abs(pp.pdgId()) > 500 and abs(pp.pdgId()) < 600 and pp.isPromptDecayed()]
 
         event.gen_b0mesons = [pp for pp in pruned_gen_particles if abs(pp.pdgId())==511]
-        
+        #print len(event.gen_bmesons)
+        #print len(event.gen_b0mesons)
+
         # walk down the lineage of the B mesons and find the final state muons and charged particles
         for ip in event.gen_b0mesons + event.gen_bmesons:
             if getattr(self.cfg_ana, 'verbose', False):
@@ -186,7 +212,7 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
 
 
                 # if all tracks are reconstructed
-                if hasattr(event.kstll.lp, 'reco') and hasattr(event.kstll.lm, 'reco') and hasattr(event.kstll.pi, 'reco') and hasattr(event.kstll.k, 'reco') and event.kstll.pi.reco.bestTrack() and event.kstll.k.reco.bestTrack():
+                if hasattr(event.kstll.lp, 'reco') and hasattr(event.kstll.lm, 'reco') and hasattr(event.kstll.pi, 'reco') and hasattr(event.kstll.k, 'reco'):
 
                     # vertex fit
                     # clear the vectors
@@ -204,14 +230,14 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
                         #if ic.track().isNonnull():            # check that the track is valid
                             #self.tofit_cc.push_back(ic)
                     #set_trace()
-                    self.tofit_cc.push_back(event.kstll.lp.reco.physObj)
-                    self.tofit_cc.push_back(event.kstll.lm.reco.physObj)
+                    self.tofit_cc.push_back(event.kstll.lp.reco)
+                    self.tofit_cc.push_back(event.kstll.lm.reco)
                     m_k = 0.493677
                     m_pi = 0.13957018
                     m_ele = 0.0005109989461
                     # push the track into the vector
-                    self.tofit_pc.push_back(event.kstll.pi.reco.physObj)
-                    self.tofit_pc.push_back(event.kstll.k.reco.physObj)
+                    self.tofit_pc.push_back(event.kstll.pi.reco)
+                    self.tofit_pc.push_back(event.kstll.k.reco)
 
                     # fit it!
                     try:
@@ -224,8 +250,10 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
                         sv = svtree.currentDecayVertex().get()
                         recoSv = makeRecoVertex(sv, kinVtxTrkSize=4) # need to do some gymastics
                         event.kstll.sv = recoSv
-                        event.myB = BKstLL(dimu[0], dimu[1], event.kstll.pi.reco, event.kstll.k.reco, recoSv, event.beamspot)
+                        #event.myB = BKstLL(dimu[0], dimu[1], event.kstll.pi.reco, event.kstll.k.reco, recoSv, event.beamspot)
+                        event.myB = BKstLL(dimu[0], dimu[1], event.kstll.pi.reco, event.kstll.k.reco, recoSv, event.pv)
 
+                        #print 'foundB0'
 
                 break # yeah, only one at a time, mate!
         
@@ -234,6 +262,7 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
 #                 import pdb ; pdb.set_trace()
             
         if not hasattr(event, 'kstll'):
+            print 'no kstll'
             return False
         self.counters.counter('BKstJPsiEEGenAnalyzer').inc('has a good gen B0->KstJPsiEE')
         
@@ -288,6 +317,7 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
     def isKstLL(b0meson, togenmatchleptons, togenmatchhadrons, flav=13):
 #         isB0 = (b0meson.pdgId()==511)
 #         isAntiB0 = (not isB0)
+        #print flav
         # positive-charged leptons
         lps = [ip for ip in b0meson.finaldaughters if ip.pdgId()==-abs(flav)]
         # negative-charged leptons
@@ -296,11 +326,14 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         pis = [ip for ip in b0meson.finaldaughters if abs(ip.pdgId())== 211]
         # kaons from K*
         ks  = [ip for ip in b0meson.finaldaughters if abs(ip.pdgId())== 321]
-
+        #for ii in b0meson.finaldaughters:
+            #print ii.pdgId()
+        #print len(lps), len(lms), len(pis), len(ks)
         for ilep in lps+lms:
             # avoid matching the same particle twice, use the charge to distinguish (charge flip not accounted...)
             tomatch = [jj for jj in togenmatchleptons if jj.charge()==ilep.charge()]
             bm, dr = bestMatch(ilep, tomatch)
+            print ilep.pdgId(), dr
             #if dr<0.3:
             ilep.reco = bm
 
@@ -308,6 +341,7 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
             # avoid matching the same particle twice, use the charge to distinguish (charge flip not accounted...)
             tomatch = [jj for jj in togenmatchhadrons if jj.charge()==ihad.charge()]
             bm, dr = bestMatch(ihad, tomatch)
+            print ihad.pdgId(), dr
             #if dr<0.3:
             ihad.reco = bm
         
