@@ -21,7 +21,7 @@ from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer     import LHEWeightAnal
 from CMGTools.H2TauTau.proto.analyzers.JetAnalyzer          import JetAnalyzer
 
 # WTau3Mu analysers
-from CMGTools.BKstLL.analyzers.BKstJPsiEEGenAnalyzer_AOD        import BKstJPsiEEGenAnalyzer_AOD
+from CMGTools.BKstLL.analyzers.BsPhiJPsiEEGenAnalyzer_AOD        import BsPhiJPsiEEGenAnalyzer_AOD
 from CMGTools.BKstLL.analyzers.BKstJPsiEEGenTreeProducer_AOD        import BKstJPsiEEGenTreeProducer_AOD
 
 # import samples, signal
@@ -51,29 +51,13 @@ pick_events        = getHeppyOption('pick_events', False)
 ### Dataset: /BsToPhi_ToMuMu_MuFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/RunIIAutumn18DR-PUPoissonAve20_102X_upgrade2018_realistic_v15-v2/AODSIM
 
 
-inputdata = np.loadtxt('BdKstEE_AODSIM_filename.dat', dtype='str')
+#inputdata = np.loadtxt('BsPhiEE_AODSIM_filename.dat', dtype='str')
+inputdata = np.loadtxt('BsPhiJpsiEE_AODSIM_filename.dat', dtype='str')
 inputdata = ['root://cms-xrd-global.cern.ch/'+st for st in inputdata]
 
 BdKstEE_ttk = cfg.MCComponent(
     'BdKstEE_ttk',
-    #files = '/store/mc/RunIISummer16MiniAODv2/BdToKstarMuMu_BMuonFilter_SoftQCDnonD_TuneCUEP8M1_13TeV-pythia8-evtgen/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/288EFE7A-60B9-E611-B1DB-0CC47A1DF7F2.root', 
-    #files = ['file:46BFC0D9-D3AC-E711-850E-008CFAC913F8.root',],
-    #files = ['file:46BFC0D9-D3AC-E711-850E-008CFAC913F8.root','file:A6221481-FDAB-E711-B8A0-02163E01765E.root',],
-
-#    files = ['root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/46BFC0D9-D3AC-E711-850E-008CFAC913F8.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/80E3CBD8-F2AC-E711-9191-008CFAC93F0C.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/629DACDD-E0AB-E711-8792-02163E016491.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/8619CBC2-FBAB-E711-8754-02163E01643C.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/A6221481-FDAB-E711-B8A0-02163E01765E.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/569DA21D-02AC-E711-9F91-FA163E3A1163.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/44E127E3-02AC-E711-8EE2-02163E014FDA.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/C6401406-03AC-E711-9CEA-FA163E5DA5D0.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/DAE60915-EFAB-E711-B27C-FA163E74C5BB.root',
-#        'root://cms-xrd-global.cern.ch//store/mc/RunIISummer17DRStdmix/BsToJpsiPhi_BMuonFilter_TuneCUEP8M1_13TeV-pythia8-evtgen/AODSIM/NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/150000/DC42DBA8-08AC-E711-A101-FA163E3111A9.root',
-#    ]
-#    files = ['root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18DR/BsToPhi_ToMuMu_MuFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/AODSIM/PUPoissonAve20_102X_upgrade2018_realistic_v15-v2/110000/B8487657-8856-5A40-80D5-B173A1B991AF.root',]
-    #files = ['root://cms-xrd-global.cern.ch//store/user/klau/BKstPsiEEMuFilter/ttk_debug.root',]
-    #files = ['root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18DR/BdToKstarJpsi_Toee_MuFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/AODSIM/PUPoissonAve20_102X_upgrade2018_realistic_v15_ext1-v1/00000/9C4D3D80-F714-1F4E-99E1-C38EC0E3B096.root',]
+    #files = ['root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18DR/BsToPhi_Toee_MuFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/AODSIM/PUPoissonAve20_102X_upgrade2018_realistic_v15-v3/280000/92AAD7E0-3512-A640-9035-190B8EAEFF0B.root',]
     files = inputdata
 
     # a list of local or xrootd files can be specified by hand.
@@ -154,8 +138,8 @@ jetAna = cfg.Analyzer(
 )
 
 mainAna = cfg.Analyzer(
-    BKstJPsiEEGenAnalyzer_AOD,
-    name = 'BKstJPsiEEGenAnalyzer_AOD',
+    BsPhiJPsiEEGenAnalyzer_AOD,
+    name = 'BsPhiJPsiEEGenAnalyzer_AOD',
     flavour = 11,
 )
 

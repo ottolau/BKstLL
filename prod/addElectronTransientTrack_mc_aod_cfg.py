@@ -29,6 +29,7 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 runOnData( process,  names=['Photons', 'Electrons','Muons','Taus','Jets'], outputModules = [] )
 removeMCMatching(process, names=['All'], outputModules=[])
 
+#process.TFileService = cms.Service("TFileService", fileName = cms.string('ttk_debug.root'))
 
 ############ THOMAS' MC ##############
 #process.GlobalTag.globaltag = cms.string( "94X_mc2017_realistic_v12" )  
@@ -41,8 +42,8 @@ readFiles.extend(inputdata)
 
 # Configure the object that reads the input file
 process.source = cms.Source('PoolSource', 
-     fileNames = readFiles,
-#    fileNames = cms.untracked.vstring(
+#     fileNames = readFiles,
+    fileNames = cms.untracked.vstring(
 #         'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18DR/BdToKstarJpsi_Toee_MuFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/AODSIM/PUPoissonAve20_102X_upgrade2018_realistic_v15_ext1-v1/00000/9C4D3D80-F714-1F4E-99E1-C38EC0E3B096.root',
 #        'file:/eos/user/m/manzoni/BKstLL/MC/BKPsiEEMuFilter/Bu_KJPsi_ee_MINIAODSIM_9.root',
 #        'file:/eos/user/m/manzoni/BKstLL/MC/BKPsiEEMuFilter/Bu_KJPsi_ee_MINIAODSIM_8.root',
@@ -64,12 +65,13 @@ process.source = cms.Source('PoolSource',
 #         'root://cms-xrd-global.cern.ch//store/user/tstreble/Bu_KJPsi_ee_Pythia/BuToKJPsiee_Pythia_MINIAODSIM_18_06_05/180605_092537/0000/Bu_KJPsi_ee_MINIAODSIM_5.root',
 #         'root://cms-xrd-global.cern.ch//store/user/tstreble/Bu_KJPsi_ee_Pythia/BuToKJPsiee_Pythia_MINIAODSIM_18_06_05/180605_092537/0000/Bu_KJPsi_ee_MINIAODSIM_8.root',
 #         'root://cms-xrd-global.cern.ch//store/user/tstreble/Bu_KJPsi_ee_Pythia/BuToKJPsiee_Pythia_MINIAODSIM_18_06_05/180605_092537/0000/Bu_KJPsi_ee_MINIAODSIM_2.root',
-#    ),
+          '/store/mc/RunIIAutumn18DR/BsToPhi_Toee_MuFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/AODSIM/PUPoissonAve20_102X_upgrade2018_realistic_v15-v3/280000/92AAD7E0-3512-A640-9035-190B8EAEFF0B.root',
+    ),
 )
 
 process.selectedElectrons = cms.EDFilter(
     "PATElectronSelector",
-    src = cms.InputTag( 'selectedPatElectrons' ),
+    src = cms.InputTag( 'slimmedElectrons' ),
     cut = cms.string("abs(eta)<2.5")
 )
 
@@ -100,18 +102,19 @@ process.ttkPath = cms.Path(
 
 # Configure the object that writes an output file
 process.out = cms.OutputModule('PoolOutputModule',
-    fileName = cms.untracked.string('/eos/uscms/store/user/klau/BKstPsiEEMuFilter/ttk_output_test_ttkonly.root'),
+    fileName = cms.untracked.string('ttk_debug.root'),
     SelectEvents = cms.untracked.PSet( 
         SelectEvents = cms.vstring("ttkPath")
     )
 )
 
+
 process.prunedOutput = cms.EndPath( process.out )
 
 # limit the number of events to be processed
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32( -1 )
+    input = cms.untracked.int32( 1000 )
 )
 
 ## logger
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100

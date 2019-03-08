@@ -45,6 +45,9 @@ class BKstJPsiEEGenTreeProducer_AOD(L1PurityTreeProducerBase):
         self.bookGenParticle(self.tree, 'b0_k') ; self.bookParticle(self.tree, 'b0_k_reco' )
         self.var(self.tree, 'b0_dr' )
 
+        self.bookParticle(self.tree, 'b0_lp_PF')
+        self.bookParticle(self.tree, 'b0_lm_PF')
+
         self.var(self.tree, 'tag_mu_reco_dxy')
         self.var(self.tree, 'tag_mu_reco_dz')
         self.var(self.tree, 'tag_mu_reco_dxyError')
@@ -99,6 +102,9 @@ class BKstJPsiEEGenTreeProducer_AOD(L1PurityTreeProducerBase):
         self.var(self.tree, 'b0_reco_vty')
         self.var(self.tree, 'b0_reco_vtz')
 
+        self.var(self.tree, 'b0_reco_Lxy')
+        self.var(self.tree, 'b0_reco_LxyError')
+
 
     def process(self, event):
         '''
@@ -119,6 +125,12 @@ class BKstJPsiEEGenTreeProducer_AOD(L1PurityTreeProducerBase):
             self.fillGenParticle(self.tree, 'tag_mu', event.thetagmu)
             if hasattr(event.thetagmu, 'reco'):
                 self.fillParticle(self.tree, 'tag_mu_reco', event.thetagmu.reco)
+                #recoTagmu = event.thetagmu.reco
+                self.fill(self.tree, 'tag_mu_reco_dxy', event.thetagmu.dxy)
+                self.fill(self.tree, 'tag_mu_reco_dz', event.thetagmu.dz)
+                self.fill(self.tree, 'tag_mu_reco_dxyError', event.thetagmu.dxyError)
+                self.fill(self.tree, 'tag_mu_reco_dzError', event.thetagmu.dzError)
+                self.fill(self.tree, 'tag_mu_reco_vz', event.thetagmu.vz)
 
         self.fillGenParticle(self.tree, 'b0', event.kstll)
         self.fill(self.tree, 'b0_dr', event.kstll.dr)
@@ -136,14 +148,19 @@ class BKstJPsiEEGenTreeProducer_AOD(L1PurityTreeProducerBase):
         self.fillGenParticle(self.tree, 'b0_k' , event.kstll.k )
         if hasattr(event.kstll.k, 'reco'):
             self.fillParticle(self.tree, 'b0_k_reco', event.kstll.k.reco)
-
-        if hasattr(event.thetagmu, 'reco'):
-            self.fill(self.tree, 'tag_mu_reco_dxy', event.thetagmu.reco.bestTrack().dxy(event.pv.position()))
-            self.fill(self.tree, 'tag_mu_reco_dz', event.thetagmu.reco.bestTrack().dz(event.pv.position()))
-            self.fill(self.tree, 'tag_mu_reco_dxyError', event.thetagmu.reco.bestTrack().dxyError())
-            self.fill(self.tree, 'tag_mu_reco_dzError', event.thetagmu.reco.bestTrack().dzError())
-            self.fill(self.tree, 'tag_mu_reco_vz', event.thetagmu.reco.bestTrack().vz())
         
+        if hasattr(event.kstll.lp, 'PF'):
+            self.fillParticle(self.tree, 'b0_lp_PF', event.kstll.lp.PF)       
+        if hasattr(event.kstll.lm, 'PF'):
+            self.fillParticle(self.tree, 'b0_lm_PF', event.kstll.lm.PF)
+
+        #if hasattr(event.thetagmu, 'reco'):
+            #self.fill(self.tree, 'tag_mu_reco_dxy', event.thetagmu.reco.bestTrack().dxy(event.pv.position()))
+            #self.fill(self.tree, 'tag_mu_reco_dz', event.thetagmu.reco.bestTrack().dz(event.pv.position()))
+            #self.fill(self.tree, 'tag_mu_reco_dxyError', event.thetagmu.reco.bestTrack().dxyError())
+            #self.fill(self.tree, 'tag_mu_reco_dzError', event.thetagmu.reco.bestTrack().dzError())
+            #self.fill(self.tree, 'tag_mu_reco_vz', event.thetagmu.reco.bestTrack().vz())
+           
         if hasattr(event.kstll.lp, 'reco') and hasattr(event.kstll.lm, 'reco') and hasattr(event.kstll.pi, 'reco') and hasattr(event.kstll.k, 'reco'):
             if hasattr(event, 'myB'):
                 self.fill(self.tree, 'foundB0', 1)
@@ -203,6 +220,8 @@ class BKstJPsiEEGenTreeProducer_AOD(L1PurityTreeProducerBase):
             self.fill(self.tree, 'b0_reco_vty', event.myB.bs().y())
             self.fill(self.tree, 'b0_reco_vtz', event.myB.bs().z())
 
+            self.fill(self.tree, 'b0_reco_Lxy', event.Lxy)
+            self.fill(self.tree, 'b0_reco_LxyError', event.LxyError)
 
         #else: self.fill(self.tree, 'foundB0', 0)
         

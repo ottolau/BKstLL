@@ -18,11 +18,11 @@ from pdb import set_trace
 ROOT.gSystem.Load('libCMGToolsBKstLL')
 from ROOT import KinematicVertexFitter as VertexFitter
 
-class BKstJPsiEEGenAnalyzer(Analyzer):
+class BKstJPsiEEGenAnalyzer_AOD(Analyzer):
     '''
     '''
     def declareHandles(self):
-        super(BKstJPsiEEGenAnalyzer, self).declareHandles()
+        super(BKstJPsiEEGenAnalyzer_AOD, self).declareHandles()
 
         self.handles['L1muons'] = AutoHandle(
             ('gmtStage2Digis', 'Muon'),
@@ -74,9 +74,9 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         #self.handles['eletrackMap'] = AutoHandle(('ttk', 'eleTtkMap', 'TTK'), 'std::vector<pair<edm::Ptr<pat::Electron>,reco::Track> >')
 
     def beginLoop(self, setup):
-        super(BKstJPsiEEGenAnalyzer, self).beginLoop(setup)
-        self.counters.addCounter('BKstJPsiEEGenAnalyzer')
-        count = self.counters.counter('BKstJPsiEEGenAnalyzer')
+        super(BKstJPsiEEGenAnalyzer_AOD, self).beginLoop(setup)
+        self.counters.addCounter('BKstJPsiEEGenAnalyzer_AOD')
+        count = self.counters.counter('BKstJPsiEEGenAnalyzer_AOD')
         count.register('all events')
         count.register('has a good gen B0->KstJPsiEE')
 
@@ -91,7 +91,7 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
     def process(self, event):
         self.readCollections(event.input)
 
-        self.counters.counter('BKstJPsiEEGenAnalyzer').inc('all events')
+        self.counters.counter('BKstJPsiEEGenAnalyzer_AOD').inc('all events')
         
         # vertex stuff
         event.beamspot    = self.handles['beamspot'].product()
@@ -222,8 +222,8 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
             if   abs(self.cfg_ana.flavour)==11 : togenmatchleptons = event.electrons
             elif abs(self.cfg_ana.flavour)==13 : togenmatchleptons = event.muons
             else                               : print 'you can only pick either pdgId 11 or 13' ; raise
-            #isit, lp, lm, pi, k = self.isKstLL(ib0, togenmatchleptons, event.alltracks, abs(self.cfg_ana.flavour)) 
-            isit, lp, lm, pi, k = self.isKstLL(ib0, event.alltracks, event.alltracks, abs(self.cfg_ana.flavour)) 
+            isit, lp, lm, pi, k = self.isKstLL(ib0, togenmatchleptons, event.alltracks, abs(self.cfg_ana.flavour)) 
+            #isit, lp, lm, pi, k = self.isKstLL(ib0, event.alltracks, event.alltracks, abs(self.cfg_ana.flavour)) 
             if isit:
                 event.kstll    = ib0
                 event.kstll.lp = lp
@@ -272,8 +272,15 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
                         sv = svtree.currentDecayVertex().get()
                         recoSv = makeRecoVertex(sv, kinVtxTrkSize=4) # need to do some gymastics
                         event.kstll.sv = recoSv
-                        #event.myB = BKstLL(dimu[0], dimu[1], event.kstll.pi.reco, event.kstll.k.reco, recoSv, event.beamspot)
                         event.myB = BKstLL(dimu[0], dimu[1], event.kstll.pi.reco, event.kstll.k.reco, recoSv, event.pv)
+
+                        #Dispvtx = ROOT.GlobalPoint(-1.0*(event.pv.x() - recoSv.x()), -1.0*(event.pv.y() - recoSv.y()), 0.0)
+                        #Disperr = sv.error()
+                        #event.Lxy = Dispvtx.perp()
+                        #event.LxyError = ROOT.TMath.Sqrt(Disperr.rerr(Dispvtx))
+
+                        event.Lxy = self.vtxfit.getLxy(recoSv, event.pv)
+                        event.LxyError = self.vtxfit.getLxyError(recoSv, event.pv)
 
                         #print 'foundB0'
 
@@ -286,7 +293,7 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         if not hasattr(event, 'kstll'):
             print 'no kstll'
             return False
-        self.counters.counter('BKstJPsiEEGenAnalyzer').inc('has a good gen B0->KstJPsiEE')
+        self.counters.counter('BKstJPsiEEGenAnalyzer_AOD').inc('has a good gen B0->KstJPsiEE')
         
         toclean = None
         
@@ -304,7 +311,7 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
 #             return False
 #             import pdb ; pdb.set_trace()
 # 
-#         self.counters.counter('BKstJPsiEEGenAnalyzer').inc('no fuck ups')
+#         self.counters.counter('BKstJPsiEEGenAnalyzer_AOD').inc('no fuck ups')
         
         
 #         elif abs(event.kstll.mother(0).pdgId())>500 and abs(event.kstll.mother(0).pdgId())<600:
@@ -353,11 +360,20 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         #print len(lps), len(lms), len(pis), len(ks)
         for ilep in lps+lms:
             # avoid matching the same particle twice, use the charge to distinguish (charge flip not accounted...)
-            tomatch = [jj for jj in togenmatchleptons if jj.charge()==ilep.charge()]
+            tomatch = [jj for jj in togenmatchhadrons if jj.charge()==ilep.charge()]
             bm, dr = bestMatch(ilep, tomatch)
             #print ilep.pdgId(), dr
             #if dr<0.3:
             ilep.reco = bm
+
+        # match with gsfEelctron
+        for ilep in lps+lms:
+            # avoid matching the same particle twice, use the charge to distinguish (charge flip not accounted...)
+            tomatch = [jj for jj in togenmatchleptons if jj.charge()==ilep.charge()]
+            bm, dr = bestMatch(ilep, tomatch)
+            #print ilep.pdgId(), dr
+            if dr<0.3:
+                ilep.PF = bm
 
         for ihad in pis+ks:
             # avoid matching the same particle twice, use the charge to distinguish (charge flip not accounted...)
@@ -379,7 +395,7 @@ class BKstJPsiEEGenAnalyzer(Analyzer):
         if a == p :
             return True
         for i in xrange(0,p.numberOfMothers()):
-            if BKstJPsiEEGenAnalyzer.isAncestor(a,p.mother(i)):
+            if BKstJPsiEEGenAnalyzer_AOD.isAncestor(a,p.mother(i)):
                 return True
         return False
 

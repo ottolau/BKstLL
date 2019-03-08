@@ -11,7 +11,8 @@ BdKstEE_ttk = creator.makeMCComponentFromLocal(
     'BdKstEE_ttk', 
     'XXX', 
     path = '/eos/uscms/store/user/klau/BKstPsiEEMuFilter/', 
-    pattern='.*root', 
+    #pattern='.*root', 
+    pattern='.*ttk_debug.*root',
     xSec=1.0, 
 )
 
